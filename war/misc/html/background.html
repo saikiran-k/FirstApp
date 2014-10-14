@@ -2,6 +2,14 @@
 	<title></title>
 	<head>
 	<link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://www.agilecrm.com/test/extension/css/agile-theme-main.css">
+    <link rel="stylesheet" href="https://www.agilecrm.com/test/extension/css/agile-theme-custom.css">
+    <style>
+	body
+	{
+		font-family: "Open Sans",Arial,sans-serif;
+	}
+	</style>
 	</head>
 	<body>
 	
@@ -42,7 +50,7 @@
 					</div>
 				</div>
 				<div class="form-group form-group-sm">
-					<label class="col-xs-3 control-label">Job Description : </label>
+					<label class="col-xs-3 control-label">Job Title : </label>
 					<div class="col-xs-9">
 					<input name='title' type='text' class='_crmio_inp form-control' value='{{title}}' placeholder='Job Title'>
 					</div>
@@ -207,7 +215,7 @@
 		</script>
 
 			<script type="text/html" id="contact-form-template">
-				<h3 style='text-align:center;background-color:#986b94;color:white;margin-top:0px;padding:10px;'>Add Contact</h3>
+				<header class="panel-heading">Add Contact</header>
 				<form class="form-horizontal" role="form" style="height:350;overflow-x:hidden;padding:10px;">
 				<div class="form-group form-group-sm">
 					<label class="col-xs-3 control-label">Name : </label>
@@ -223,7 +231,7 @@
 					</div>
 				</div>
 				<div class="form-group form-group-sm">
-					<label class="col-xs-3 control-label">Job Description : </label>
+					<label class="col-xs-3 control-label">Job Title : </label>
 					<div class="col-xs-9">
 					<input name='title' type='text' class='_crmio_inp form-control' placeholder='Job Title'>
 					</div>
@@ -240,9 +248,9 @@
 					<input name='phone' data-subtype='mobile' type='text' class='_crmio_inp form-control' placeholder='Mobile No.'>
 					</div>
 				</div>
-					<div style='text-align:center;'>
-						<input type='button' value='Save' class='_crmio_save_' onclick='onSaveContact();'>
-						<input type='button' value='Cancel' class='_crmio_cancel_' onclick='onClose();'>
+					<div style="margin-left:27%;">
+						<input type='button' value='Save' class='_crmio_save_ btn btn-primary' onclick='onSaveContact();'>
+						<input type='button' value='Cancel' class='_crmio_cancel_ btn btn-primary' onclick='onClose();'>
 					</div>
 				</form>
 		</script>

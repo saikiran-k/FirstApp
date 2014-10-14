@@ -1,0 +1,36 @@
+@charset "utf-8";
+/* CSS Document */
+
+@font-face 
+{
+	font-family:opensans;
+	src:url(https://www.google.com/fonts#UsePlace:use/Collection:Open+Sans);
+}
+
+@font-face {
+    font-family: 'novareg';
+	src:url(../fonts/txt-fonts/ProximaNova-Regular.otf);
+    font-weight: normal;
+    font-style: normal;
+	
+}
+
+
+@font-face {
+    font-family: 'novalight';
+    src:url(documentfont/ProximaNova-Light.otf);
+   }
+
+@font-face {
+    font-family: 'novasemibold';
+    src:url(documentfont/ProximaNova-Semibold.otf); 
+	    }
+
+@font-face {
+    font-family: 'novabold';
+    src:url(documentfont/ProximaNova-Bold.otf);
+  }
+
+
+
+/* font declarations */

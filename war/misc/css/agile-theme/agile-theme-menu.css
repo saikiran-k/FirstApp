@@ -1,0 +1,52 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+html {
+	overflow-y: hidden;
+}
+.brand
+{
+	background:#5484bc;
+}
+.brand a
+{
+	color:#fff;
+}
+.sidebar, .chat-sidebar
+{
+	 background-color: #2d2f36;
+    color: #fafbfb;
+    font-size: 12px;
+}
+.main-content
+{
+	background:#fff;
+}
+.navbar-form
+{
+	margin: 7px -15px;
+}
+.search-group
+{
+	 border: 1px solid #eee;
+    padding: 0 15px;
+}
+.navbar-form 
+{
+	padding-left:20em;
+}
+.header .rounded-avatar {
+    width: 30px;
+}
+
+.rounded-avatar {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+}
+.btn-top
+{
+	margin:8px 0 0;
+}
+

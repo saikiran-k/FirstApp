@@ -1,5 +1,7 @@
 var USER_SETTINGS={};
 
+var sucess_msg = "<strong>Verification successful</strong> - Your preferences have been successfully saved. <br/><strong>Please restart the browser</strong> -> The new credentials will be applied after you restart your browser.";
+
 /**	
 	Save settings via chrome.storage.local
 **/
@@ -8,6 +10,12 @@ function saveSettings(settings,onSaved)
 	if(!settings)return;
 	
 	chrome.storage.local.set({'USER_SETTINGS': settings}, function(){
+		console.log(chrome.runtime.lastError);
+		console.log('User settings saved.');
+		if(onSaved)
+			onSaved();
+	});
+	chrome.storage.sync.set({'USER_SETTINGS': settings}, function(){
 		console.log(chrome.runtime.lastError);
 		console.log('User settings saved.');
 		if(onSaved)
@@ -40,6 +48,17 @@ function showOnlyClass(cls)
 	elem.filter('.'+cls).show();
 }
 
+
+function unsubscribeToPubNub(oldDomain)
+{
+	//console.log('Unsubscribe to pubnub.--------',oldDomain);
+	var pubnub = PUBNUB.init({ 'publish_key' : 'pub-c-e4c8fdc2-40b1-443d-8bb0-2a9c8facd274','subscribe_key' : 'sub-c-118f8482-92c3-11e2-9b69-12313f022c90', ssl : true, origin : 'pubsub.pubnub.com' });
+		pubnub.ready();
+	 pubnub.unsubscribe({
+				channel : oldDomain,
+			 });
+}
+
 $(function(){
 
 	loadSettings(function(){
@@ -61,6 +80,9 @@ $(function(){
 		
 			showOnlyClass(USER_SETTINGS.crm);
 			$("div#crm-selection>div[data-crm='"+USER_SETTINGS.crm+"']").addClass('active');
+			
+			$('#setting_link').show();
+			$('#setting_link').attr('href','https://'+USER_SETTINGS.domain+'.agilecrm.com/#notification-prefs');
 		}
 		else
 		{
@@ -71,6 +93,8 @@ $(function(){
 	
 	$("#agile-submit").on("click",function(){
 		var elem_settings=$('form#agile-form');
+		if(USER_SETTINGS.domain)
+		USER_SETTINGS.oldDomain = USER_SETTINGS.domain;
 		changeSubmit('disable');
 		//USER_SETTINGS.crm=$("div#crm-selection>div.active").data('crm');
 		//USER_SETTINGS.name=elem_settings.find("input[name='user-name']").val();
@@ -85,12 +109,17 @@ $(function(){
 			cache: false,
 			dataType: "json",
 			success: function(response) {
-				$("#message").html("Verification Successful!").show();
+				$("#message").html(sucess_msg).show();
 				USER_SETTINGS.verified=true;
 				saveSettings(USER_SETTINGS,function(){ 
-					associateGmail();
+					//associateGmail();
 					changeSubmit('enable');
-					setTimeout(function(){$("#message").hide();}, 5000);
+					$('#setting_link').show();
+					$('#setting_link').attr('href','https://'+USER_SETTINGS.domain+'.agilecrm.com/#notification-prefs');
+					loadSettings();
+					setTimeout(function(){
+					$("#message").hide();
+					}, 10000);
 				});
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -135,7 +164,7 @@ $(function(){
 	
 	function associateGmail(){ 
 		$('#loaderImage').show();
-		console.log('Associating Gmail...');
+		//console.log('Associating Gmail...');
 		var old_email_addr=USER_SETTINGS.assoc_email;
 		var settings_tab_id;
 		
@@ -156,7 +185,7 @@ $(function(){
 						$('#loaderImage').hide();
 						var tagId = '';
 						chrome.tabs.query({ url: 'https://mail.google.com/*' }, function(gmailTabs){
-							console.log(gmailTabs);
+							//console.log(gmailTabs);
 							gmailTabs.forEach(function(tb){
 								if(tb.title)
 								{
@@ -176,7 +205,7 @@ $(function(){
 										
 									if(current_gmail_id.indexOf('@')==-1 || current_gmail_id!=email_addr)return;
 										
-									console.log('got here');
+									//console.log('got here');
 									if(tabId !== tab.id)
 									{
 										tabId = tb.id;

@@ -1,0 +1,43 @@
+@charset "utf-8";
+/* CSS Document */
+
+.tabView
+{
+	
+    padding: 10px 30px;
+	background:#fff;
+	min-height:500px;
+
+
+}
+.tabcontent-spacing
+{
+	padding:30px 0 0;
+}
+
+.nav-tabs > li {
+    border-bottom: 2px solid #ddd;
+    margin: 0;
+}
+.nav-tabs li:hover,.nav-tabs li.active 
+{
+	 border-bottom: 2px solid #5484ba;
+}
+.nav-tabs li a:hover,.tabView li a:focus
+{
+	background:none;
+}
+
+.nav-tabs li a
+{
+
+font-size:14px;	
+}
+#contactDetailsTab li a
+{
+	padding:10px 11px;
+}
+.nav>li>a
+{
+padding: 10px 14px;
+}

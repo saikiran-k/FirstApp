@@ -265,6 +265,6 @@ function getCountryOptions(selectedCountryName){
 		}
 		res+="<option value='"+ky+"' "+sel+">"+countryCode2Name[ky]+"</option>";
 	}
-	if(!selected)res="<option value='--' selected>N/A</option>"+res;
+	if(!selected)res="<option value='--' selected>Select One</option>"+res;
 	return res;
 }							

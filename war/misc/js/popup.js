@@ -3,9 +3,10 @@ var crm={};
 
 function fetchActiveContact(onFail){
 	chrome.tabs.query({active:true,highlighted:true}, function(tb){
-		console.log(tb.length+ ' -> '+tb[0].url);
+		//console.log(tb.length+ ' -> '+tb[0].url);
 		
-		if(tb[0].url.indexOf('www.linkedin.com')!=-1){
+		
+			if(tb[0].url.indexOf('www.linkedin.com/profile')!=-1 || tb[0].url.indexOf('www.linkedin.com/company')!=-1){
 			$("div.crmio-navbar li").removeClass('active');
 			$("li#menu-new").addClass('active');
 			$("div#crm_others ").html(getHTML("linkedin-active",{tabId:tb[0].id}));
@@ -26,7 +27,7 @@ function fetchActiveContact(onFail){
 		
 		/* When showing UI here
 		chrome.tabs.sendMessage(tb[0].id,'crmio_get_contact_details',function(resp){
-			console.log(resp);
+			//console.log(resp);
 		});
 		*/
 	});
@@ -51,7 +52,7 @@ function loadNotifications()
 	$("div#notifications").removeClass('hidden');
 	if(!crm.init_status)
 	{
-		console.log("Connector failed");
+		//console.log("Connector failed");
 		return;
 	}
 	
@@ -59,7 +60,7 @@ function loadNotifications()
 	
 	
 	chrome.storage.local.get('agile_notifications',function(data){ 
-		console.log("Notifications",data);
+		//console.log("Notifications",data);
 		var html = '';
 		if(data.agile_notifications)
 		{
@@ -68,7 +69,7 @@ function loadNotifications()
 			{
 				if(index%2!=0)
 					message.class = 'active';
-				console.log('message',message);
+				//console.log('message',message);
 				if(message.notification == 'CAMPAIGN_NOTIFY')
 					html += getHTML('campaign-notify', message);
 				else if(message.notification == 'CALL')
@@ -78,11 +79,15 @@ function loadNotifications()
 	
 			});
 		} else {
-			html = '<div id="message" class="alert alert-info">No Notifications.</div>';
+			html = '<div id="message" class="alert alert-info alert-nobg">No Notifications.</div>';
 		}
-		//console.log(html);
+		////console.log(html);
 		$("div#notifications").html(html);
 		$(".time-ago").timeago();
+		$(".text_avatar").closest("img").error(function()
+		  {
+		   $(this).initial({charCount: 2});
+		  });
 	});
 }
 
@@ -94,7 +99,7 @@ function loadUpcomingTasks()
 	$("div#upcoming").removeClass('hidden');
 	if(!crm.init_status)
 	{
-		console.log("Connector failed");
+		//console.log("Connector failed");
 		return;
 	}
 	
@@ -106,6 +111,8 @@ function loadUpcomingTasks()
 		{
 			$("div#upcoming").find('li#'+task.id).data(task);
 		});
+		$.timeago.settings.allowFuture = true;
+		$(".time-ago").timeago();
 	});	
 }
 
@@ -125,7 +132,7 @@ function loadSearchResults()
 {
 	if(!crm.init_status)
 	{
-		console.log("Connector failed");
+		//console.log("Connector failed");
 		return;
 	}
 	$("#btn_search").button('loading');
@@ -133,7 +140,7 @@ function loadSearchResults()
 	
 	crm.search($("input#inp_search_text").val(),function(contacts){
 		
-		console.log(contacts);
+		//console.log('------------',contacts);
 		var html = '<div id="message" class="alert alert-info">No Contacts found matching the keyword.</div>';
 		if(contacts.length > 0)
 			html = getHTML("search-results",contacts);
@@ -143,6 +150,10 @@ function loadSearchResults()
 		$('.search-results').on('click', function(){
 			window.open($(this).attr('data-url'));
 		});
+		$(".text_avatar").closest("img").error(function()
+		  {
+		   $(this).initial({charCount: 2});
+		  });
 	});
 	
 }
@@ -164,7 +175,7 @@ function saveDeal()
 		if(label!='email')
 			deal[label] = value;
 	});
-	console.log(deal);
+	//console.log(deal);
 	var email = $("#deal_form input[name='email']").val();
 	
 	if(email.length == 0)
@@ -174,27 +185,27 @@ function saveDeal()
 		function(resp)
 		{	
 			$('#save_deal').attr('disabled','disabled');
-			console.log(resp);
+			//console.log(resp);
 			$("#deal_form").append('<div id="message" class="alert alert-info">Deal is added in AgileCRM.</div>');
 		},
 		function(err)
 		{
-			console.log(err);
+			//console.log(err);
 			$("#deal_form").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
 		});
 	} else {
-		console.log(email);
+		//console.log(email);
 
 		crm.addDeal(email, deal, 
 		function(resp)
 		{	
 			$('#save_deal').attr('disabled','disabled');
-			console.log(resp);
+			//console.log(resp);
 			$("#deal_form").append('<div id="message" class="alert alert-info">Deal is added in AgileCRM.</div>');
 		},
 		function(err)
 		{
-			console.log(err);
+			//console.log(err);
 			$("#deal_form").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
 		});
 	}
@@ -223,7 +234,7 @@ function saveTask()
 		if(label!='email')
 			task[label] = value;
 	});
-	console.log(task);
+	//console.log(task);
 	var email = $("#task_form input[name='email']").val();
 	if(email.length == 0)
 	{
@@ -231,26 +242,26 @@ function saveTask()
 		function(resp)
 		{
 			$('#save_task').attr('disabled','disabled');
-			console.log(resp);
+			//console.log(resp);
 			$("#task_form").append('<div id="message" class="alert alert-info">Task is added in AgileCRM.</div>');
 		},
 		function(err)
 		{
-			console.log(err);
+			//console.log(err);
 			$("#task_form").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
 		});
 	} else {
-		console.log(email);
+		//console.log(email);
 	crm.addTask(email, task, 
 		function(resp)
 		{
 			$('#save_task').attr('disabled','disabled');
-			console.log(resp);
+			//console.log(resp);
 			$("#task_form").append('<div id="message" class="alert alert-info">Task is added in AgileCRM.</div>');
 		},
 		function(err)
 		{
-			console.log(err);
+			//console.log(err);
 			$("#task_form").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
 		});
 	}
@@ -269,21 +280,21 @@ function completeTask(task)
 			rel_contacts.push(contact.id);
 		else
 			rel_contacts.push(contact);
-		console.log(contact.id);
+		//console.log(contact.id);
 	});
 	task.contacts = rel_contacts;
 	task.owner_id = task.taskOwner.id;
-	console.log("Completed Task",task);
+	//console.log("Completed Task",task);
 	crm.updateTask(task, 
 		function(resp)
 		{
-			console.log(resp);
+			//console.log(resp);
 			$("#"+task.id).css('text-decoration: line-through;');
 			$("#"+task.id).data(resp)
 		},
 		function(err)
 		{
-			console.log(err);
+			//console.log(err);
 			//$("#task_form").append('<p class="bg-danger">'+err.responseText+'</p>');
 		});
 }
@@ -302,7 +313,7 @@ function saveContact()
 		var property = {};
 		if(value)
 		{
-			console.log(label +' : '+ value);
+			//console.log(label +' : '+ value);
 			property.value= value;
 			property.name=label;
 			property.type="SYSTEM";
@@ -310,19 +321,80 @@ function saveContact()
 		}
 	});
 	contact.properties = properties;
-	console.log(contact);
+	//console.log(contact);
 	crm.addContact(contact, function(resp)
 		{	
 			$('#save_contact').attr('disabled','disabled');
-			console.log(resp);
-			$("#contact_form").append('<p class="bg-success">Contact added to AgileCRM.</p>');
+			//console.log(resp);
+			var contactLink = 'https://'+USER_SETTINGS.domain+'.agilecrm.com/#contact/'+resp.id;
+			$("#contact_form").append('<div id="message" class="alert alert-info">Contact added to AgileCRM. Click here to <a href="'+contactLink+'" target="_blank">Open Contact</a></div>');
 		}, 
 		function(err)
 		{
-			console.log(err);
-			$("#contact_form").append('<p class="bg-danger">'+err.responseText+'</p>');
+			//console.log(err);
+			$("#contact_form").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
 		});
 }
+
+function onSave(actionMsg){
+			//console.log('onSave - hit');
+			//var inputs=$('div#crm_others input._crmio_inp');
+			var props=[];
+			$('#crm_others').find('input._crmio_inp').each(function()
+			{
+				if($(this).val()) {
+				
+				if($(this).attr('data-subtype'))
+					props.push({name:$(this).attr('name'),value:$(this).val(),type:'SYSTEM',subtype:$(this).attr('data-subtype')});
+				else props.push({name:$(this).attr('name'),value:$(this).val(),type:'SYSTEM'});
+				}
+			});
+			
+			var addrCustom={};
+			var addrElems=document.querySelectorAll('div#_crmio_extn_addContact ._crmio_inp_custom.address[name]');
+			$('#crm_others').find('._crmio_inp_custom.address[name]').each(function()
+			{
+				if($(this).val() && $(this).val().length>0)
+					addrCustom[$(this).attr('name')]=$(this).val();
+			});
+
+			//console.log(addrCustom);
+			if(addrCustom.addressCity || addrCustom.addressCountry)
+			{
+				var obj={};
+				if(addrCustom.addressCity)obj.city=addrCustom.addressCity;
+				if(addrCustom.addressCountry)obj.country=addrCustom.addressCountry;
+				props.push({name:'address',value:JSON.stringify(obj),subtype:''});
+			}
+			//console.log('Properties 2 Save :',props);
+			var contact = {};
+			contact.properties = props;
+			contact.type=actionMsg;
+			
+			crm.addContact(contact, function(resp)
+				{	
+					$('#crm_others').find('input[type="button"]').attr('disabled','disabled');
+					//console.log(resp);
+					var contactLink = 'https://'+USER_SETTINGS.domain+'.agilecrm.com/#contact/'+resp.id;
+					$("#crm_others").append('<div id="message" class="alert alert-info">Contact added to AgileCRM. Click here to <a href="'+contactLink+'" target="_blank">Open Contact</a></div>');
+				}, 
+				function(err)
+				{
+					//console.log(err);
+					$("#crm_others").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
+				});
+		
+		}
+
+$.validator.addMethod(
+        "customPhone",
+        function(value, element) {
+            var re = new RegExp("[0-9\-\(\)\s]+");
+			//console.log(value,re.test(value));
+            return this.optional(element) || re.test(value);
+        },
+        "Please enter valid Phone Number."
+);
 
 function validateDealForm()
 {
@@ -332,9 +404,16 @@ function validateDealForm()
 		},
         rules: {
             name:"required",
-			expected_value: "required",
-			close_date: "required",
-			probability: "required",
+			expected_value: {
+				required: true,
+				number: true,
+				max: 1000000000000
+			},
+			probability: {
+				required: true,
+				number: true,
+				max: 100
+			},
 			milestone: "required",
             email: {
 				email: true
@@ -342,10 +421,17 @@ function validateDealForm()
         },
 		messages: {
 			name: "Please enter a name for the Deal.",
-			probability: "Please enter a probability for the Deal.",
-			expected_value: "Please enter a value for the Deal.",
-			milestone: "Please select the milestone of the Deal.",
-			close_date: "Please select a Close date for the Deal.",
+			probability: {
+			required: "This field is required",
+			number: "Please enter valid number",
+			max: "Please enter a value less than or equal to 100."
+			},
+			expected_value:  {
+			required: "This field is required",
+			number: "Please enter valid number",
+			max: "Please enter a value less than or equal to 1000000000000."
+			},
+			milestone: "Please select the milestone for the Deal.",
 			email: "Please enter a valid Email Address."
 		}
 		
@@ -386,9 +472,36 @@ function validateContactForm()
             first_name:"required",
 			last_name: "required",
             email: {
-                required: true,
 				email: true
-            }
+            },
+			phone: {
+				customPhone: true
+			}
+        },
+		messages: {
+			first_name: "Please enter your First Name.",
+			last_name: "Please Enter your Last Name.",
+			email: "Please enter a valid Email Address."
+		}
+		
+    });
+}
+
+function validateFBLNContactForm()
+{
+	$('#crm_others form').validate({
+		submitHandler: function(form){
+			onSave('PERSON');
+		},
+        rules: {
+            first_name:"required",
+			last_name: "required",
+            email: {
+				email: true
+            },
+			phone: {
+				customPhone: true
+			}
         },
 		messages: {
 			first_name: "Please enter your First Name.",
@@ -408,7 +521,7 @@ function showDealForm()
 
 	// Get the owners list from the server.
 	crm.loadSimpleUrl(crm.base_url+'users',function(response){
-		console.log(response);
+		//console.log(response);
         var html = '';
         // Construct the option for the Milestones Select list dynamicly.
         $.each(response,function(index,user)
@@ -419,8 +532,8 @@ function showDealForm()
 	});
 	
 	// Get the milestone from the server.
-	crm.loadSimpleUrl(crm.js_url+'contact/get-milestones?id='+USER_SETTINGS.apikey,function(response){
-		console.log(response);
+	crm.loadSimpleUrl(crm.base_url+'milestone',function(response){
+		//console.log(response);
 		var milestones = response.milestones.split(',');
         var html = '';
         // Construct the option for the Milestones Select list dynamicly.
@@ -431,7 +544,7 @@ function showDealForm()
        $("#deal_form #milestone").html(html);
 		$("div#new_deal").removeClass('hidden');
 	});
-	$('.date').datepicker({minDate:0});
+	$('.date').datepicker();
 	validateDealForm();
 }
 
@@ -443,7 +556,7 @@ function showTaskForm()
 	$("div#container>div").addClass('hidden');
 	// Get the owners list from the server.
 	crm.loadSimpleUrl(crm.base_url+'users',function(response){
-		console.log(response);
+		//console.log(response);
         var html = '';
         // Construct the option for the Milestones Select list dynamicly.
         $.each(response,function(index,user)
@@ -455,7 +568,7 @@ function showTaskForm()
 	   $("div#new_task").removeClass('hidden');
 	});
 	
-	$('#dueDate').datepicker({minDate:0});
+	$('#dueDate').datepicker();
 	validateTaskForm();
 }
 
@@ -471,6 +584,9 @@ function showContactForm()
 }
 
 $(function(){
+
+        $("html,body").css("overflow-y","hidden");
+		
 
 	loadSettings(function(){
 		if(!USER_SETTINGS.email)
@@ -537,30 +653,73 @@ $(function(){
 		});
 	});
 	
-	$("div#container").on("click","input#linkedinFetch,input#facebookFetch",function(evt){
+		$("div#container").on("click","input#facebookFetch",function(evt){
 		chrome.tabs.sendMessage(parseInt(this.dataset['tabid']),'crmio_get_contact_details', function(contact){
-			console.log(contact);
+			//console.log(contact);
+			contact.data.countrycode = countryCode2Name;
+			if(contact.type=='PERSON')
+			{
+				$('#crm_others').html(getHTML('contact-add',contact.data));
+				validateFBLNContactForm();
+			}
+			else
+				$('#crm_others').html(getHTML('fb-company',contact.data));
+			
 		});
-		window.close();
+		//window.close();
 		
 	});
+	$("div#container").on("click","input#linkedinFetch",function(evt){
+		chrome.tabs.sendMessage(parseInt(this.dataset['tabid']),'crmio_get_contact_details', function(contact){
+			//console.log(contact);
+			contact.data.countrycode = countryCode2Name;
+			if(contact.type=='PERSON')
+			{
+				$('#crm_others').html(getHTML('contact-add',contact.data));
+				validateFBLNContactForm();
+			}
+			else
+				$('#crm_others').html(getHTML('ln-company',contact.data));
+			
+		});
+		//window.close();
+		
+	});
+	
+	$('#crm_others').delegate('#company_save','click',function()
+	{
+		onSave('COMPANY');
+	});
+	/* $('#crm_others').delegate('#contact_save','click',function()
+	{
+		alert('saving');
+		onSave('PERSON');
+	}); */
 	$('#upcoming').delegate('.complete_task','click',function()
 	//$(".complete_task").live('click', function(evt)
 	{
-		var task = $(this).parent().data();
-		console.log($(this).prop('checked'));
+		var listSelector =  $('li#'+$(this).attr('data-task'));
+		var task =listSelector.data();
+		//console.log($(this).parent().data());
 		if($(this).prop('checked'))
 		{
+			$(this).parent().find('i').addClass("checked");
 			task.is_complete = true;
-			$("#"+task.id).css('text-decoration','line-through');
+			listSelector.find('span.subject').css('text-decoration','line-through');
 		}
 		else
 		{
+			$(this).parent().find('i').removeClass("checked");
 			task.is_complete = false;
-			$("#"+task.id).css('text-decoration','none');
+			listSelector.find('span.subject').css('text-decoration','none');
 		}
 		//task.progress = "100";
 		completeTask(task);
 	});
 	
+	$(".text_avatar").closest("img").error(function()
+	  {
+	   $(this).initial({charCount: 2});
+	  });
+		chrome.browserAction.setBadgeText({'text':''});
 });

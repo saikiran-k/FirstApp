@@ -22,7 +22,7 @@ mail_window:"div.ii.gt.adP.adO"
 
 var tracking_image={ src:"img/track_test.png", id:"tracking_image" };
 var agile_send="<div id='agile_send_button'><img src='https://s3.amazonaws.com/agilecrm/panel/uploaded-logo/prabathk/png?id=uploadDocumentForm' style='vertical-align:middle;' height='18' width='18'> Send</div>";
-var agile_checkbox="<div style='display:inline-block;padding-left:5px;margin-right:30%;font-family:arial,sans-serif;font-size:11px;' data-tooltip='Enable Tracking with Agile CRM'>Track Mail <input type='checkbox' style='vertical-align:middle;'></div>";
+var agile_checkbox="<div style='display:inline-block;padding-left:5px;font-family:arial,sans-serif;font-size:11px;' data-tooltip='Enable Tracking with Agile CRM'><input type='checkbox' style='vertical-align:middle;margin-right:5px;'>Track Mail</div>";
 
 /**
 	Binds to compose_window.
@@ -65,7 +65,7 @@ function GmailComposeBind(compose_window)
 	if(USER_SETTINGS.crm)
 	{
 		var tpl_bind=this.send_button.closest('table').parent().parent();
-		tpl_bind.children().get(0).insertAdjacentHTML('afterend',"<div style='background-color:whitesmoke;padding:5px;font-size:0.9em;'><select class='_agileTemplate' style='width:230px;font-family:arial,sans-serif;font-size:11px;'><option value='-1'>Select Agile CRM Mail Template</option></select></div>");
+		tpl_bind.children().get(0).insertAdjacentHTML('afterend',"<div style='background-color:whitesmoke;padding:5px;font-size:0.9em;'><select class='_agileTemplate' style='width:230px;font-family:arial,sans-serif;font-size:11px;float:right;'><option value='-1'>Select Agile CRM Mail Template</option></select></div>");
 		this.template_binder=tpl_bind.find('select._agileTemplate');
 		this.template_binder.before(this.check_box);
 	}
@@ -153,7 +153,7 @@ GmailComposeBind.prototype.agileTemplates=function(){
 	this.template_binder.on("change",function(){
 		try{
 			var idx = parseInt(this.value);
-			console.log("--------------------------------");
+			//console.log("--------------------------------");
 			if(idx<0) base.fillTemplate();		
 			else base.fillTemplate(idx);
 			
@@ -175,11 +175,26 @@ GmailComposeBind.prototype.fillTemplate=function(tplIdx){
 	
 	if(mail_templates[tplIdx])
 	{
-		this.message_box.html(mail_templates[tplIdx].text);
+		this.message_box.html(getHTML(mail_templates[tplIdx].text,{}));
 		this.compose_window.find("input[name='subjectbox']").val(mail_templates[tplIdx].subject);
 		this.message_box.focus();
 	}
 };
+
+/**
+ * Remove the custom fields from the templates using handlebars.
+ */
+function getHTML(tpl,data)
+{
+	var fxn=Handlebars.compile(tpl);
+	
+	if(Object.prototype.toString.call(data)==='[object Array]')
+	{
+		return fxn( {length:data.length, content:data} );
+	}
+	
+	return fxn(data);
+}
 
 /** Registering tab, so as to know from which tabs, image request should be blocked **/
 var isRegistered=false;
@@ -223,7 +238,7 @@ function getCurrentGmailId()
 }
 
 var mail_observer = new MutationObserver(function(i){
-	console.log('BOUND - Observing user mails.');
+	//console.log('BOUND - Observing user mails.');
 	if(USER_SETTINGS && USER_SETTINGS.email)
 	{
 		var image_link = 'fr='+USER_SETTINGS.email;
@@ -251,7 +266,7 @@ var compose_observer=new MutationObserver(function(m){
 	}*/
 	// Remove comment to above code if you want to Allow binding only if email is allowed from the extension.
 	
-	console.log("BOUND - Binded all Gmail tabs.");
+	//console.log("BOUND - Binded all Gmail tabs.");
 	
 	registerTab();
 	
@@ -269,7 +284,7 @@ var compose_observer=new MutationObserver(function(m){
 				
 				crm.loadTemplatesInfo(function(data){
 					mail_templates=data;
-					console.log('Mail Templates : '+data.length);
+					//console.log('Mail Templates : '+data.length);
 					gmail_bind.agileTemplates();
 				});
 			}

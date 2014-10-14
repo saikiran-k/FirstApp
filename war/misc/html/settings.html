@@ -73,7 +73,7 @@
 			<div class='form-group'>
 			<label for="inputKey">API Key</label>  
 			 <p class="help-block">For instructions to find your API key in Agile, please click <a target="_blank" href='https://github.com/agilecrm/javascript-api#setting-api--analytics'>here</a></p>
-			<input id="inputKey" required="required" name="agile_apikey" class="form-control" type="text" placeholder="Agile API Key">
+			<input id="inputKey" required="required" name="agile_apikey" class="form-control" type="password" placeholder="Agile API Key">
 			</div>
 			
 			<div id="err_msg" class="alert alert-danger error-msg" style='display:none'></div>
@@ -85,8 +85,15 @@
 		</div>
 		</div>
 
+		<div id="settings_help" class="row">
+		<div class='col-md-6'>
+		<h5 class="ac" >Notification Settings</h5>
+		<div class='well'>
+			Change your notification settings from Agile CRM Settings page <br/><br/> <a id="setting_link" target="_blank" class="btn btn-primary" style="display:none;">Change settings </a> <br/><br/>
+			<p>*  Please restart your browser for new settings to take effect.</p>
 		</div>
-
-
+		</div>
+		</div>
+	</div>
 	</body>
 </html>

@@ -461,7 +461,7 @@
 				</span>
 				</div>
 				<div class="col-xs-10 no-left-padding" style="position: static;padding-right: 0px;">
-								<span style="float:right;font-size:85%;"><time class="time-ago" datetime="{{timeago notify_time}}"> {{timeago notify_time}} </time></span>
+								<span ><time class="time-ago" datetime="{{timeago notify_time}}"> {{timeago notify_time}} </time></span>
 
 				<span style="vertical-align:text-top;" class="notifications-title-ellipsis">
 					<a href="#contact/{{id}}" id = "campaign-contact-id" style="color:black;font-weight:600;" title=" {{getPropertyValue properties "first_name"}} {{ getPropertyValue properties "last_name"}}">{{getPropertyValue properties "first_name"}} {{getPropertyValue properties "last_name"}}</a>

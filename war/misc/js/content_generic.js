@@ -24,7 +24,7 @@ function linkPhoneNumbers(node) {
             var phoneNumbers = phoneNumberRegExMatcher.exec(child.nodeValue);
             if (phoneNumbers) {
                 var nextChild = child.nextSibling;
-                if (nextChild && nextChild.class == '_crmio_extn_') {
+                if (nextChild && nextChild.className == '_crmio_extn_') {
                     continue;
                 }
 
@@ -81,7 +81,7 @@ function initClickHandler(className,emailAddr){
 			{
 				var contact_link = 'https://'+data.owner.domain+'.agilecrm.com/#contact/'+data.id;
 				// contact present in CRM
-				console.log(data);
+				//console.log(data);
 				elements.find('i.fa.fa-refresh.fa-spin').css('display','none');
 				elements.find('i.fa.fa-search').css('display','none');
 				elements.find('i.fa.fa-plus-circle').css('display','none');
@@ -112,7 +112,7 @@ function initClickHandler(className,emailAddr){
 		if(elm.length==0)
 		{			
 			chrome.runtime.sendMessage({msg: "contact_form",template: "contact-form"}, function(response) {
-			  console.log(response);
+			  //console.log(response);
 			  crmioIframe=createPopupIframe(response.dialog);
 			  elm=$('iframe#_crmio_extn_iframe');
 			elm.fadeIn();
@@ -142,7 +142,7 @@ function initClickHandler(className,emailAddr){
 	}
 	else if(cls.indexOf('fa-check')!=-1)
 	{
-		console.log(elements.find('i.fa.fa-check').attr('data-url'));
+		//console.log(elements.find('i.fa.fa-check').attr('data-url'));
 		window.open(elements.find('i.fa.fa-check').attr('data-url'));
 	}
 }
@@ -150,6 +150,8 @@ function initClickHandler(className,emailAddr){
 function createPopupIframe(_html){
 	var stylesheets = '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">\
 													<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">\
+													<link rel="stylesheet" href="https://www.agilecrm.com/test/extension/css/agile-theme-main.css">\
+    <link rel="stylesheet" href="https://www.agilecrm.com/test/extension/css/agile-theme-custom-email.css">\
 													<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>\
 													<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>';
 	if(crmioIframe){
@@ -225,12 +227,12 @@ function createPopupIframe(_html){
 			if(evt.data.action=='add_contact')contact.type='PERSON';
 			else contact.type = 'COMPANY';
 				
-			console.log('Contact Info : ',contact);	
+			//console.log('Contact Info : ',contact);	
 			
 			if(!crm)crm=new CRMConnector();
 			
 			crm.addContact(contact,function(resp){
-				console.log('Added');
+				//console.log('Added');
 				$(crmioIframe).fadeOut();
 				
 				var elemSelector='';
@@ -250,8 +252,8 @@ function createPopupIframe(_html){
 				elements.find('i.fa.fa-plus-circle').css('display','none');
 				elements.find('i.fa.fa-check').css('display','inline');
 			},
-			function(){
-				console.log('Error - try again');
+			function(err){
+				alert(err.responseText);
 			});	
 		}
 		else if(evt.data.action=='close')
@@ -274,20 +276,20 @@ function OnNodeInserted(event) {
 
 if(window.location.origin.indexOf('mail.google.com')==-1)
 {
-	if(window.location.origin.indexOf('-dot-sandbox-dot-agilecrmbeta.appspot.com')==-1){
-	
+	if(window.location.origin.indexOf('agilecrm.com')==-1 && window.location.origin.indexOf('agilecrmbeta.appspot.com')==-1)
+	{
 		var lnk=document.createElement('link');
 		lnk.href=chrome.extension.getURL('css/font-awesome.min.css');
 		lnk.rel='stylesheet';
 		lnk.type='text/css';
 		(document.head||document.documentElement).appendChild(lnk);
 		
-		console.log('**highlighting email addresses**');
+		//console.log('**highlighting email addresses**');
 		highlightNumbers();
 		
 		$(document).on("click","div#_crmio_extn_addContact",function(evt){
-			console.log('Add Contact clicked');
-			console.log(evt);
+			//console.log('Add Contact clicked');
+			//console.log(evt);
 			
 			if(evt.target.className=='_crmio_cancel_'){
 				$(this).hide();

@@ -46,6 +46,7 @@ for ( var i = 0, l = items.length; i < l; i++)
 if (items[i].name == name)
 return items[i].value;
 }
+
 return '';
 }
 
@@ -67,10 +68,10 @@ function getGravatarImage(items, width)
 		if (email)
 		{
 		//console.log('https://secure.gravatar.com/avatar/' + MD5(email) + '.jpg?s=' + width + "&d=" + escape(img));
-			return 'https://secure.gravatar.com/avatar/' + MD5(email) + '.jpg?s=' + width + "&d=" + escape(img);
+			return 'https://secure.gravatar.com/avatar/' + MD5(email) + '.jpg?s=' + width + "&d=404";
 		}
 		//console.log('https://secure.gravatar.com/avatar/' + MD5("") + '.jpg?s=' + width + "&d=" + escape(img));
-		return 'https://secure.gravatar.com/avatar/' + MD5("") + '.jpg?s=' + width + "&d=" + escape(img);
+		return 'https://secure.gravatar.com/avatar/' + MD5("") + '.jpg?s=' + width + "&d=404";
 }
 
 function getNotifInfo(message)
@@ -81,11 +82,15 @@ function getNotifInfo(message)
 		{
 			var arr = message.notification.split('_');
 			var temp = ucfirst(arr[0].replace('CONTACT', 'COMPANY')) + " " + ucfirst(arr[1]);
-			return " - " + temp;
+			return temp;
 		}
 
 		// Replaces '_' with ' '
-		var str = message.notification.replace(/_/, ' ');
+		var str = '';
+		if(message.notification)
+		str = message.notification.replace(/_/, ' ');
+		else
+		str = message.sub_type.replace(/_/, ' ');
 
 		switch (str) {
 		case "IS BROWSING":
@@ -97,7 +102,7 @@ function getNotifInfo(message)
 			if (customJSON["workflow_name"] == undefined)
 			return str.toLowerCase() + " " + customJSON.url_clicked;
 
-			return str.toLowerCase() + " " + customJSON.url_clicked + " " + " of campaign " + "\"" + customJSON.workflow_name + "\""
+			return str.toLowerCase() + " " + customJSON.url_clicked + " " + " of campaign " + "\"" + customJSON.workflow_name + "\"";
 
 		case "OPENED EMAIL":
 			  var customJSON = JSON.parse(message.custom_value);
@@ -153,6 +158,8 @@ Handlebars.registerHelper("countrycode", function(country){
 });
 
 Handlebars.registerHelper("timeago", function(ctx){
+	if(ctx/100000000000 < 1)
+	ctx=ctx*1000;
 	var tm=new Date(ctx); // millisec
 	
 	return tm.toDateString()+" "+tm.toLocaleTimeString();
@@ -417,7 +424,7 @@ $(function()
 	 */
 	Handlebars.registerHelper('ucfirst', function(value)
 	{
-		return (value && typeof value === 'string') ? (value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()) : '';
+		return (value && typeof value === 'string') ? (value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()).replace('_',' ') : '';
 	});
 
 	/**

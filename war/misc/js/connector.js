@@ -14,8 +14,8 @@ function CRMConnector()
 	if(settings.crm)
 	{
 		this.headers = { Authorization:"xx "+btoa(settings.email+':'+settings.apikey) };
-	//	this.base_url="https://"+settings.domain+".agilecrm.com/dev/api/";
-		this.base_url="https://"+settings.domain+"-dot-sandbox-dot-agile-crm-cloud.appspot.com/dev/api/";
+		this.base_url="https://"+settings.domain+".agilecrm.com/dev/api/";
+		//this.base_url="https://"+settings.domain+"-dot-sandbox-dot-agile-crm-cloud.appspot.com/dev/api/";
 		this.js_url='https://'+settings.domain+'.agilecrm.com/core/js/api/';
 	}
 	
@@ -23,7 +23,7 @@ function CRMConnector()
 }
 
 CRMConnector.prototype.notifications=function(onLoad,cursor){
-	console.log('Running...');
+	//console.log('Running...');
 	if(!cursor)cursor='';
 	
 	$.ajax({
@@ -38,7 +38,7 @@ CRMConnector.prototype.notifications=function(onLoad,cursor){
 					onLoad(response); 
 				},
 		error: function (jqXHR, textStatus, errorThrown) {
-					console.log("Error - ");
+					//console.log("Error - ");
 				}
 	});
 };
@@ -54,7 +54,7 @@ CRMConnector.prototype.liveNotifications=function(onLoad){
 		headers:this.headers,
 		success:function(response){ onLoad(response); },
 		error: function (jqXHR, textStatus, errorThrown) {
-					console.log("Error - ");
+					//console.log("Error - ");
 				}
 	});
 };
@@ -65,12 +65,12 @@ CRMConnector.prototype.upcomingTasks=function(onLoad){
 	
 	$.ajax({
 		type:"GET",
-		url:this.base_url+"tasks/my/dashboardtasks",
+		url:this.base_url+"tasks",
 		dataType:"json",
 		headers:this.headers,
 		success:function(response){ onLoad(response); },
 		error: function (jqXHR, textStatus, errorThrown) {
-					console.log("Error - ");
+					//console.log("Error - ");
 				}
 	});
 };
@@ -81,12 +81,13 @@ CRMConnector.prototype.search=function(keyword,onLoad){
 	
 	$.ajax({
 		type:"GET",
-		url:this.base_url+"search/all/"+keyword+"?page_size=5&type=person",
+		url:this.base_url+"search/all/keyword?q="+keyword+"&page_size=5&type=person",
 		dataType:"json",
 		headers:this.headers,
 		success:function(response){ onLoad(response); },
 		error: function (jqXHR, textStatus, errorThrown) {
-					console.log("Error - ");
+					//console.log("Error - ");
+					onLoad([]);
 				}
 	});
 };
@@ -102,7 +103,7 @@ CRMConnector.prototype.loadUrl=function(userUrl,onLoad){
 		headers:this.headers,
 		success:function(response){ onLoad(response); },
 		error: function (jqXHR, textStatus, errorThrown) {
-					console.log("Error - ");
+					//console.log("Error - ");
 				}
 	});
 };
@@ -115,14 +116,14 @@ CRMConnector.prototype.loadSimpleUrl=function(userUrl,onLoad){
 		headers:this.headers,
 		success:function(response){ onLoad(response); },
 		error: function (jqXHR, textStatus, errorThrown) {
-					console.log("Error - ");
+					//console.log("Error - ");
 				}
 	});
 };
 
 CRMConnector.prototype.loadTemplatesInfo=function(onLoad,onError){
 	if(!USER_SETTINGS.crm)return;
-	console.log('Loading Template List');
+	//console.log('Loading Template List');
 	$.ajax({
 		type:'GET',
 		url:this.base_url+'email/templates',
@@ -130,7 +131,7 @@ CRMConnector.prototype.loadTemplatesInfo=function(onLoad,onError){
 		dataType:'json',
 		success:function(resp){ onLoad(resp); },
 		error: function(xhr,status,err){ 
-			console.log('Error');
+			//console.log('Error');
 			if(typeof(onError)=='function')onError(); 
 		}
 	});
@@ -138,7 +139,7 @@ CRMConnector.prototype.loadTemplatesInfo=function(onLoad,onError){
 
 CRMConnector.prototype.loadTemplate=function(templateFile,onLoad,onError){
 	if(!USER_SETTINGS.crm)return;
-	console.log('Loading Template : '+templateFile);
+	//console.log('Loading Template : '+templateFile);
 	$.ajax({
 		type:'GET',
 		url:this.base_url+'template/content?path='+encodeURIComponent('email/'+templateFile),
@@ -146,7 +147,7 @@ CRMConnector.prototype.loadTemplate=function(templateFile,onLoad,onError){
 		dataType:'text',
 		success:function(resp){ onLoad(resp); },
 		error: function(xhr,status,err){ 
-			console.log('Error');
+			//console.log('Error');
 			if(typeof(onError)=='function')onError(); 
 		}
 	});
@@ -154,7 +155,7 @@ CRMConnector.prototype.loadTemplate=function(templateFile,onLoad,onError){
 
 CRMConnector.prototype.getContactDetails=function(emailId,onLoad,onError){
 	if(!USER_SETTINGS.crm)return;
-	console.log('Getting info : '+emailId);
+	//console.log('Getting info : '+emailId);
 	$.ajax({
 		type:'GET',
 		url:this.base_url+'contacts/search/email/'+emailId,
@@ -162,10 +163,10 @@ CRMConnector.prototype.getContactDetails=function(emailId,onLoad,onError){
 		dataType:'json',
 		success:function(resp){ 
 			onLoad(resp); 
-			console.log('got info');
+			//console.log('got info');
 		},
 		error: function(xhr,status,err){ 
-			console.log('Error');
+			//console.log('Error');
 			if(typeof(onError)=='function')onError(); 
 		}
 	});
@@ -173,8 +174,8 @@ CRMConnector.prototype.getContactDetails=function(emailId,onLoad,onError){
 
 CRMConnector.prototype.addContact=function(contact,onLoad,onError){
 	if(!USER_SETTINGS.crm)return;
-	console.log('Add contact hit : -----');
-	console.log(contact);
+	//console.log('Add contact hit : -----');
+	//console.log(contact);
 	//return;
 	
 	$.ajax({
@@ -188,7 +189,7 @@ CRMConnector.prototype.addContact=function(contact,onLoad,onError){
 			onLoad(resp); 
 		},
 		error: function(xhr,status,err){ 
-			console.log('Error');
+			//console.log('Error');
 			if(typeof(onError)=='function')onError(xhr); 
 		}
 	});
@@ -196,8 +197,8 @@ CRMConnector.prototype.addContact=function(contact,onLoad,onError){
 
 CRMConnector.prototype.addTask=function(email,task,onLoad,onError){
 	if(!USER_SETTINGS.crm)return;
-	console.log('Add task hit : -----');
-	console.log(task);
+	//console.log('Add task hit : -----');
+	//console.log(task);
 	//return;
 	
 	$.ajax({
@@ -211,7 +212,7 @@ CRMConnector.prototype.addTask=function(email,task,onLoad,onError){
 			onLoad(resp); 
 		},
 		error: function(xhr,status,err){ 
-			console.log('Error');
+			//console.log('Error');
 			if(typeof(onError)=='function')onError(xhr); 
 		}
 	});
@@ -219,8 +220,8 @@ CRMConnector.prototype.addTask=function(email,task,onLoad,onError){
 
 CRMConnector.prototype.createTask=function(task,onLoad,onError){
 	if(!USER_SETTINGS.crm)return;
-	console.log('Add task hit : -----');
-	console.log(task);
+	//console.log('Add task hit : -----');
+	//console.log(task);
 	//return;
 	
 	$.ajax({
@@ -234,7 +235,7 @@ CRMConnector.prototype.createTask=function(task,onLoad,onError){
 			onLoad(resp); 
 		},
 		error: function(xhr,status,err){ 
-			console.log('Error');
+			//console.log('Error');
 			if(typeof(onError)=='function')onError(xhr); 
 		}
 	});
@@ -242,8 +243,8 @@ CRMConnector.prototype.createTask=function(task,onLoad,onError){
 
 CRMConnector.prototype.updateTask=function(task,onLoad,onError){
 	if(!USER_SETTINGS.crm)return;
-	console.log('Update task hit : -----');
-	console.log(task);
+	//console.log('Update task hit : -----');
+	//console.log(task);
 	//return;
 	
 	$.ajax({
@@ -257,7 +258,7 @@ CRMConnector.prototype.updateTask=function(task,onLoad,onError){
 			onLoad(resp); 
 		},
 		error: function(xhr,status,err){ 
-			console.log('Error');
+			//console.log('Error');
 			if(typeof(onError)=='function')onError(xhr); 
 		}
 	});
@@ -265,8 +266,8 @@ CRMConnector.prototype.updateTask=function(task,onLoad,onError){
 
 CRMConnector.prototype.addDeal=function(email,deal,onLoad,onError){
 	if(!USER_SETTINGS.crm)return;
-	console.log('Add deal hit : -----');
-	console.log(deal);
+	//console.log('Add deal hit : -----');
+	//console.log(deal);
 	//return;
 
 	$.ajax({
@@ -280,7 +281,7 @@ CRMConnector.prototype.addDeal=function(email,deal,onLoad,onError){
 			onLoad(resp); 
 		},
 		error: function(xhr,status,err){ 
-			console.log('Error');
+			//console.log('Error');
 			if(typeof(onError)=='function')onError(xhr); 
 		}
 	});
@@ -288,8 +289,8 @@ CRMConnector.prototype.addDeal=function(email,deal,onLoad,onError){
 
 CRMConnector.prototype.createDeal=function(deal,onLoad,onError){
 	if(!USER_SETTINGS.crm)return;
-	console.log('Add deal hit : -----');
-	console.log(deal);
+	//console.log('Add deal hit : -----');
+	//console.log(deal);
 	//return;
 
 	$.ajax({
@@ -303,7 +304,7 @@ CRMConnector.prototype.createDeal=function(deal,onLoad,onError){
 			onLoad(resp); 
 		},
 		error: function(xhr,status,err){ 
-			console.log('Error');
+			//console.log('Error');
 			if(typeof(onError)=='function')onError(xhr); 
 		}
 	});

@@ -53,36 +53,13 @@ function getCompanyDetails(){
     
     result.linkedin = "http://www.linkedin.com" + pathname(el.find('.top-bar .header a:first').attr('href'));
      
-    console.log(result); 
+    //console.log(result); 
     result.addressCity=result.addressCity.replace(/^[ ,]*/,'');
-		chrome.runtime.sendMessage({msg:"contact_dialog",template: "ln-company", data: result}, function(response) {
-			  console.log('-----response------',response);
-			  crmioIframe=createPopupIframe(response.dialog);
-			  $('iframe#_crmio_extn_iframe').fadeIn();
-			});
-        /* crmioIframe=createPopupIframe("<h3 style='text-align:center;'>Add Company</h3>\
-				Name : <input name='name' type='text' class='_crmio_inp' value='"+result.company+"' placeholder='Company Name'><br/>\
-				URL : <input name='url' type='text' class='_crmio_inp' value='"+result.website+"' placeholder='Website, http(s)://*'><br/>\
-				Email : <input name='email' type='text' class='_crmio_inp' placeholder='Email Address'><br/>\
-				Phone No. : <input name='phone' data-subtype='mobile' type='text' class='_crmio_inp' placeholder='Mobile No.'><br/>\
-				LinkedIn : <input name='website' data-subtype='LINKEDIN' type='text' class='_crmio_inp' value='"+result.linkedin+"' placeholder='http(s)://*'><br/>\
-				Address :	<input name='addressStreet' type='text' class='_crmio_inp_custom address' value='"+result.addressStreet+"' placeholder='Street'><br/>\
-							<input name='addressCity' type='text' class='_crmio_inp_custom address' value='"+result.addressCity+"' placeholder='City'><br/>\
-							<input name='addressRegion' type='text' class='_crmio_inp_custom address' value='"+result.addressRegion+"' placeholder='State'>\
-							<input name='addressZip' type='text' class='_crmio_inp_custom address' value='"+result.addressZip+"' placeholder='Zip'>\
-							<select name='addressCountry' class='_crmio_inp_custom address' style='width:150px;'>"+
-								getCountryOptions(result.addressCountry)
-                            +"</select>\
-				<div style='text-align:center;'>\
-					<input type='button' value='Save' class='_crmio_save_' onclick='onSaveCompany();'>\
-						&nbsp;&nbsp;\
-					<input type='button' value='Cancel' class='_crmio_cancel_' onclick='onClose();'>\
-				</div>");
-	$(crmioIframe).fadeIn(); */
+	return result;
 }
 
 function getContactDetails(){
-	console.log('linkedin - scrapper');
+	//console.log('linkedin - scrapper');
 	
 	var el=$('body');
 	
@@ -168,12 +145,15 @@ function getContactDetails(){
 		
 		res = makeLinkedinUrl(el.find('.public-profile a').attr('href'));
 		if(res)return res;
-		
+		try{
 		var match;
 		if (match = $.trim(profileId(el)).match(/linkedin\/member-(\w+)/))
 			return "http://www.linkedin.com/profile/view?id=" + match[1];
      
         return '';
+		} catch(err){
+			return '';
+		}
     })();
 
     result.twitter = (function() {
@@ -220,47 +200,19 @@ function getContactDetails(){
     result.title = $.trim(el.find('#background-experience .section-item:first header h4').text());
     
     result.description = $.trim(el.find('#background-experience .section-item:first p.description').text());
-	
-	chrome.runtime.sendMessage({msg:"contact_dialog",template: "contact-add", data: result}, function(response) {
-			  console.log('-----response------',response);
-			  crmioIframe=createPopupIframe(response.dialog);
-			  $('iframe#_crmio_extn_iframe').fadeIn();
-			});
-    
-   /*  crmioIframe=createPopupIframe("<h3 style='text-align:center;'>Add Contact</h3>\
-				Name : <input name='first_name' type='text' class='_crmio_inp' value='"+result.firstName+"' placeholder='First Name'>&nbsp;\
-						<input name='last_name' type='text' class='_crmio_inp' value='"+result.lastName+"' placeholder='Last Name'><br/>\
-				Company : <input name='company' type='text' class='_crmio_inp' value='"+result.company+"' placeholder='Company'><br/>\
-				Job Description : <input name='title' type='text' class='_crmio_inp' value='"+result.title+"' placeholder='Job Title'><br/>\
-				Email : <input name='email' type='text' class='_crmio_inp' value='"+result.email+"' placeholder='Email Address'><br/>\
-				Mobile : <input name='phone' data-subtype='mobile' type='text' class='_crmio_inp' value='"+result.mobile+"' placeholder='Mobile No.'><br/>\
-				Website : <input name='website' data-subtype='URL' type='text' class='_crmio_inp' value='"+result.website+"' placeholder='http(s)://*'><br/>\
-				LinkedIn : <input name='website' data-subtype='LINKEDIN' type='text' class='_crmio_inp' value='"+result.linkedin+"' placeholder='Linkedin'><br/>\
-				Skype : <input name='website' data-subtype='SKYPE' type='text' class='_crmio_inp' value='"+result.skype+"' placeholder='Skype Id'><br/>\
-				Twitter : <input name='website' data-subtype='TWITTER' type='text' class='_crmio_inp' value='"+result.twitter+"' placeholder='Twitter Id'><br/>\
-				Address : <input name='addressCity' type='text' class='_crmio_inp_custom address' value='"+result.addressCity+"' placeholder='Address City'>\
-							<select name='addressCountry' class='_crmio_inp_custom address' style='width:150px;'>"+
-								getCountryOptions(result.addressCountry)
-                            +"</select>\
-				<div style='text-align:center;'>\
-					<input type='button' value='Save' class='_crmio_save_' onclick='onSaveContact();'>\
-						&nbsp;&nbsp;\
-					<input type='button' value='Cancel' class='_crmio_cancel_' onclick='onClose();'>\
-				</div>");
-    $(crmioIframe).fadeIn();
-     */
+	//console.log('----------result-------',result);
     return result;
 }
 
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    console.log(sender.tab ?
+   /*  console.log(sender.tab ?
                 "from a content script:" + sender.tab.url :
-                "from the extension");
+                "from the extension"); */
     if (request == 'crmio_get_contact_details')
     {  
-		if($('body #top-card').length)getContactDetails();
-		else if($('body #activity-feed').length)getCompanyDetails();
+		if($('body #top-card').length)sendResponse({type:'PERSON', data: getContactDetails()});
+		else if($('body #activity-feed').length)sendResponse({type:'COMPANY', data: getCompanyDetails()});
 	}	
   });

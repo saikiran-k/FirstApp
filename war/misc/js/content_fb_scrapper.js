@@ -52,7 +52,7 @@ function getCompanyDetails(){
       return $.trim(text).replace(/\s+/g, ' ');
     })();
     
-	console.log(result);
+	//console.log(result);
 	
 	result.addressCity = '';
     var addr = result.address.split(/\s+,\s+/g);//replace(/^[ ,]*/,'');
@@ -66,37 +66,11 @@ function getCompanyDetails(){
 	}
 
 	result.addressCity=result.addressCity.replace(/^[ ,]*/,'');
-		chrome.runtime.sendMessage({msg:"contact_dialog",template: "fb-company", data: result}, function(response) {
-			  console.log('-----response------',response);
-			  crmioIframe=createPopupIframe(response.dialog);
-			  $('iframe#_crmio_extn_iframe').fadeIn();
-			});
-	/* crmioIframe=createPopupIframe("<h3 style='text-align:center;'>Add Company</h3>\
-				<table style='margin:10px;'><tody>\
-				<tr><td><label for='name'>Name : </label></td><td><input name='name' type='text' class='_crmio_inp' value='"+result.companyName+"' placeholder='Company Name'><br/></td></tr>\
-				<tr><td><label>URL : </label></td><td><input name='url' type='text' class='_crmio_inp' value='"+result.website+"' placeholder='Website, http(s)://*'><br/></td></tr>\
-				<tr><td><label>Email : </label></td><td><input name='email' type='text' class='_crmio_inp' value='"+result.email+"'placeholder='Email Address'><br/></td></tr>\
-				<tr><td><label>Phone No. : </label></td><td><input name='phone' data-subtype='mobile' type='text' class='_crmio_inp' value='"+result.phone+"'placeholder='Mobile No.'><br/></td></tr>\
-				<tr><td><label>Facebook : </label></td><td><input name='website' data-subtype='FACEBOOK' type='text' class='_crmio_inp' value='"+result.facebook+"' placeholder='http(s)://*'><br/></td></tr>\
-				<tr><td><label>Address :	</label></td><td><input name='addressCity' type='text' class='_crmio_inp_custom address' value='"+result.addressCity+"' placeholder='City'><br/></td></tr>\
-							<tr><td></td><td><input name='addressRegion' type='text' class='_crmio_inp_custom address' placeholder='State'>\
-							<input name='addressZip' type='text' class='_crmio_inp_custom address' placeholder='Zip'>\
-							<tr><td></td><td><select name='addressCountry' class='_crmio_inp_custom address' style='width:150px;'>"+
-								getCountryOptions(result.addressCountry)
-                            +"</select></td></tr>\
-							</tbody></table>\
-				<div style='text-align:center;'>\
-					<input type='button' value='Save' class='_crmio_save_' onclick='onSaveCompany();'>\
-						&nbsp;&nbsp;\
-					<input type='button' value='Cancel' class='_crmio_cancel_' onclick='onClose();'>\
-				</div>");
-	
-	
-	$(crmioIframe).fadeIn(); */
+	return result;
 }
 
 function getContactDetails(){
-	console.log('fb - scrapper');
+	//console.log('fb - scrapper');
 	
 	var el=$('body');
 	
@@ -166,7 +140,7 @@ function getContactDetails(){
 	
 	if(result.title.length==0 || result.address.length==0 || result.company.length==0){
 		
-		console.log('Desperate Attempt to fetch info');
+		//console.log('Desperate Attempt to fetch info');
 		var lists=$("div#timeline_about_unit li li");
 		
 		for(var i=0;i<lists.length;++i)
@@ -211,40 +185,14 @@ function getContactDetails(){
 
 	result.addressCity=result.addressCity.replace(/^[ ,]*/,'');
 	
-    console.log(result);
-	chrome.runtime.sendMessage({msg:"contact_dialog",template: "contact-add", data: result}, function(response) {
-			  console.log('-----response------',response);
-			  crmioIframe=createPopupIframe(response.dialog);
-			  $('iframe#_crmio_extn_iframe').fadeIn();
-			});
-	/*crmioIframe=createPopupIframe("<h3 style='text-align:center;'>Add Contact</h3>\
-				Name : <input name='first_name' type='text' class='_crmio_inp' value='"+result.firstName+"' placeholder='First Name'>&nbsp;\
-						<input name='last_name' type='text' class='_crmio_inp' value='"+result.lastName+"' placeholder='Last Name'><br/>\
-				Company : <input name='company' type='text' class='_crmio_inp' value='"+result.company+"' placeholder='Company'><br/>\
-				Job Description : <input name='title' type='text' class='_crmio_inp' value='"+result.title+"' placeholder='Job Title'><br/>\
-				Email : <input name='email' type='text' class='_crmio_inp' placeholder='Email Address'><br/>\
-				Mobile : <input name='phone' data-subtype='mobile' type='text' class='_crmio_inp' value='"+result.mobile+"' placeholder='Mobile No.'><br/>\
-				Website : <input name='website' data-subtype='URL' type='text' class='_crmio_inp' value='"+result.website+"' placeholder='http(s)://*'><br/>\
-				Skype : <input name='website' data-subtype='SKYPE' type='text' class='_crmio_inp' value='"+result.skype+"' placeholder='Skype Id'><br/>\
-				Facebook : <input name='website' data-subtype='TWITTER' type='text' class='_crmio_inp' value='"+result.facebook+"' placeholder='Facebook page'><br/>\
-				Address : <input name='addressCity' type='text' class='_crmio_inp_custom address' value='"+result.addressCity+"' placeholder='Address City'>\
-							<select name='addressCountry' class='_crmio_inp_custom address' style='width:150px;'>"+
-								getCountryOptions(result.addressCountry)
-                            +"</select>\
-				<div style='text-align:center;'>\
-					<input type='button' value='Save' class='_crmio_save_' onclick='onSaveContact();'>\
-						&nbsp;&nbsp;\
-					<input type='button' value='Cancel' class='_crmio_cancel_' onclick='onClose();'>\
-				</div>");
-    $(crmioIframe).fadeIn(); */
-    
+    //console.log(result);
     return result;
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
+    //console.log(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
     if (request == 'crmio_get_contact_details'){  
-		if($('#fbTimelineHeadline a[data-medley-id="pagelet_timeline_medley_friends"]').length) sendResponse(getContactDetails());
-		else sendResponse(getCompanyDetails());
+		if($('#fbTimelineHeadline a[data-medley-id="pagelet_timeline_medley_friends"]').length) sendResponse({type:'PERSON', data: getContactDetails()});
+		else sendResponse({type:'COMPANY', data: getCompanyDetails()});
 	}	
 });

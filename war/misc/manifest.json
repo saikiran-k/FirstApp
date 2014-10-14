@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "Agile CRM",
-  "description": "Sales & Marketing CRM for Small Businesses",
+  "name": " Agile CRM Email Tracking",
+  "description": "Sell like a Pro with Smart Email Tracking and Analytics",
   "version": "1.0.1",
   "icons": { "16": "images/cloud16x16.png",
            "48": "images/cloud48x48.png",
@@ -36,12 +36,13 @@
 	},
 	{
 		"matches": ["https://mail.google.com/*"],
-		"js": ["js/lib/md5.js","js/util.js","js/xhr_override.js"],
+		"js": ["/js/lib/jquery.min.js","/js/lib/handlebars.min.js","js/lib/md5.js","js/util.js","js/xhr_override.js"],
 		"run_at":"document_start",
 		"all_frames":true
 	},
 	{
 		"matches":["http://*/*","https://*/*"],
+		"exclude_matches":["https://twitter.com/*"],
 		"js":["js/lib/jquery.min.js", "js/lib/md5.js","js/content_generic.js","js/util.js","js/connector.js"]
 	},
 	{
@@ -55,7 +56,7 @@
   ],
 	
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://push.agilecrm.com; object-src 'self'",
-  
+  "short_name": "Agile CRM",
   "web_accessible_resources": [
     "images/track_test.png",
     "js/xhr_override.js",
