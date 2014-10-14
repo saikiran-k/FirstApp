@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>Agile CRM Settings</title>
+		
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/settings.css" type="text/css">
+		
+		<script type="text/javascript" src="../js/lib/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/lib/pubnub.min.js"></script>
+		<script type="text/javascript" src="../js/settings.js"></script>
+	</head>
+	<body>
+		
+		<div class='container'>
+
+		<br/>
+		<img src='https://www.agilecrm.com/img/logo-black.png'><p>
+
+		<br/>
+
+		<!-- Create a new account -->
+		<div class="row">
+		<div class='col-md-6'>
+		<h5 class="ac">Do not have an account with Agile CRM? <small>It's fast and free for two users</small></h5>
+
+			<div class="alert alert-warning"><a target="_blank" href="https://www.agilecrm.com/?utm_source=plugins&utm_medium=shopify&utm_campaign=shopify_store"><button  class="btn btn-primary">Create a new account</button></a>
+		<br/><br/>Once you have created, please come back and fill in the details below</div>
+			
+
+		</div>
+		</div>
+
+		<div class="row"></div><br/>
+
+		<!-- Already have an account -->
+		<div class="row">
+		<div class='col-md-6'>
+		<h5 class="ac">Already have an account? <small>Enter your details</small></h5>
+		<div class='well'>
+
+		<form role="form" id='agile-form' >
+		 
+		 <!--<div class="form-group">
+			<label for="inputEmail1">Email address</label>
+			<input required="required" type="email" class="form-control" id="inputEmail1" placeholder="Enter email">
+		  </div>
+		  <div class="form-group">
+			<label for="inputPassword1">Password</label>
+			<input required="required" type="password" class="form-control" id="inputPassword1" placeholder="Password">
+		  </div>-->
+									
+
+			<!-- Hidden Divs for API Key and Domain -->
+			<div class='form-group'>
+			<label for="inputDomain">Enter Domain Name (company)</label>
+			
+			<div class='input-group'>
+			<span class="input-group-addon">https://</span>
+			  <input id="inputDomain" class="form-control" required="required" name="agile_domain" class="form-control" type="text" placeholder="If you are using abc.agilecrm.com, enter abc">
+			<span class="input-group-addon">.agilecrm.com</span>
+			
+			</div>
+			
+			</div>
+			
+			<div class='form-group'>
+			<label for="inputEmail">User Id</label>  
+			<input id="inputEmail" required="required" name="agile_apikey" class="form-control" type="email" placeholder="User Id (Your Email Address)">
+			</div>
+			
+			<div class='form-group'>
+			<label for="inputKey">API Key</label>  
+			 <p class="help-block">For instructions to find your API key in Agile, please click <a target="_blank" href='https://github.com/agilecrm/javascript-api#setting-api--analytics'>here</a></p>
+			<input id="inputKey" required="required" name="agile_apikey" class="form-control" type="text" placeholder="Agile API Key">
+			</div>
+			
+			<div id="err_msg" class="alert alert-danger error-msg" style='display:none'></div>
+			<div id="message" class="alert alert-success" style='display:none'></div>
+			
+		  <button type="button" id='agile-submit' class="btn btn-default">Submit</button>
+		</form>
+		</div>
+		</div>
+		</div>
+
+		</div>
+
+
+	</body>
+</html>

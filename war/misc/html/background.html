@@ -1,0 +1,253 @@
+<html>
+	<title></title>
+	<head>
+	<link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css" />
+	</head>
+	<body>
+	
+		<div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-sm">
+			<div class="modal-content">
+			  Contact Exists.
+			</div>
+		  </div>
+		</div>
+		<script type="text/javascript" src="../js/lib/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/lib/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../js/lib/pubnub.min.js"></script>
+		<script type="text/javascript" src="../js/lib/handlebars.min.js"></script>
+		<script type="text/javascript" src="../js/lib/md5.js"></script>
+		<script type="text/javascript" src="../js/util.js"></script>
+		<script type="text/javascript" src="../js/connector.js"></script>
+		<script type="text/javascript" src="../js/notifications.js"></script>
+		<script type="text/javascript" src="../js/content_country_code.js"></script>
+		<script type="text/javascript" src="../js/populate_template.js"></script>
+		<script type="text/javascript" src="../js/background.js"></script>
+		
+		<div id="templates">
+			<script type="text/html" id="contact-add-template">
+				<h3 style='text-align:center;background-color:#986b94;color:white;margin-top:0px;padding:10px;'>Add Contact</h3>
+				<form class="form-horizontal" role="form" style="height:350;overflow-x:hidden; padding:10px;">
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Name : </label>
+					<div class="col-xs-9">
+					<input name='first_name' type='text' class='_crmio_inp form-control' value='{{firstName}}' placeholder='First Name' style="margin-botton:5px;">
+							<input name='last_name' type='text' class='_crmio_inp form-control' value='{{lastName}}' placeholder='Last Name'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Company : </label>
+					<div class="col-xs-9">
+					<input name='company' type='text' class='_crmio_inp form-control' value='{{company}}' placeholder='Company'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Job Description : </label>
+					<div class="col-xs-9">
+					<input name='title' type='text' class='_crmio_inp form-control' value='{{title}}' placeholder='Job Title'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Email : </label>
+					<div class="col-xs-9">
+					<input name='email' type='text' class='_crmio_inp form-control' placeholder='Email Address'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Mobile : </label>
+					<div class="col-xs-9">
+					<input name='phone' data-subtype='mobile' type='text' class='_crmio_inp form-control' value='{{mobile}}' placeholder='Mobile No.'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Website : </label>
+					<div class="col-xs-9">
+					<input name='website' data-subtype='URL' type='text' class='_crmio_inp form-control' value='{{website}}' placeholder='http(s)://*'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Skype : </label>
+					<div class="col-xs-9">
+					<input name='website' data-subtype='SKYPE' type='text' class='_crmio_inp form-control' value='{{skype}}' placeholder='Skype Id'>
+					</div>
+				</div>
+				{{#if facebook}}
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Facebook : </label>
+					<div class="col-xs-9">
+					<input name='website' data-subtype='FACEBOOK' type='text' class='_crmio_inp form-control' value='{{facebook}}' placeholder='Facebook page'>
+					</div>
+				</div>
+				{{/if}}
+				{{#if linkedin}}
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">LinkedIn : </label>
+					<div class="col-xs-9">
+					<input name='website' data-subtype='LINKEDIN' type='text' class='_crmio_inp form-control' value='{{linkedin}}' placeholder='Facebook page'>
+					</div>
+				</div>
+				{{/if}}
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Address : </label>
+					<div class="col-xs-9">
+					<input name='addressCity' type='text' class='_crmio_inp_custom address form-control' value='{{addressCity}}' placeholder='Address City'>
+								<select id="addressCountry" name='addressCountry' class='_crmio_inp_custom address form-control' style='width:150px;'>
+								{{{countrycode addressCountry}}}
+								</select>
+					</div>
+				</div>
+					<div style='text-align:center;'>
+						<input type='button' value='Save' class='_crmio_save_' onclick='onSaveContact();'>
+						<input type='button' value='Cancel' class='_crmio_cancel_' onclick='onClose();'>
+					</div>
+				</form>
+		</script>
+		
+		<script type="text/html" id="fb-company-template">
+				<h3 style='text-align:center;background-color:#986b94;color:white;margin-top:0px;padding:10px;'>Add Company</h3>
+				<form class="form-horizontal" role="form" style="height:350;overflow-x:hidden; padding:10px;">
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Name : </label>
+					<div class="col-xs-9">
+					<input name='name' type='text' class='_crmio_inp form-control' value='{{companyName}}' placeholder='Company Name'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">URL : </label>
+					<div class="col-xs-9">
+					<input name='url' type='text' class='_crmio_inp form-control' value='{{website}}' placeholder='Website, http(s)://*'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Email : </label>
+					<div class="col-xs-9">
+					<input name='email' type='text' class='_crmio_inp form-control' placeholder='Email Address'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Phone No : </label>
+					<div class="col-xs-9">
+					<input name='phone' data-subtype='mobile' type='text' class='_crmio_inp form-control' value='{{phone}}' placeholder='Mobile No.'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Facebook : </label>
+					<div class="col-xs-9">
+					<input name='website' data-subtype='FACEBOOK' type='text' class='_crmio_inp form-control' value='{{facebook}}' placeholder='Facebook page'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Address : </label>
+					<div class="col-xs-9">
+					<input name='addressCity' type='text' class='_crmio_inp_custom address form-control' value='{{addressCity}}' placeholder='Address City' />
+								<input name='addressRegion' type='text' class='_crmio_inp_custom address form-control' placeholder='State'/>
+								<input name='addressZip' type='text' class='_crmio_inp_custom address form-control' placeholder='Zip' />
+								<select id="addressCountry" name='addressCountry' class='_crmio_inp_custom address form-control' style='width:150px;'>
+								{{{countrycode addressCountry}}}
+								</select>
+					</div>
+				</div>
+					<div style='text-align:center;'>
+						<input type='button' value='Save' class='_crmio_save_' onclick='onSaveCompany();'>
+						<input type='button' value='Cancel' class='_crmio_cancel_' onclick='onClose();'>
+					</div>
+				</form>
+		</script>
+
+		<script type="text/html" id="ln-company-template">
+				<h3 style='text-align:center;background-color:#986b94;color:white;margin-top:0px;padding:10px;'>Add Company</h3>
+				<form class="form-horizontal" role="form" style="height:350;overflow-x:hidden;padding:10px;">
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Name : </label>
+					<div class="col-xs-9">
+					<input name='name' type='text' class='_crmio_inp form-control' value='{{company}}' placeholder='Company Name'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">URL : </label>
+					<div class="col-xs-9">
+					<input name='url' type='text' class='_crmio_inp form-control' value='{{website}}' placeholder='Website, http(s)://*'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Email : </label>
+					<div class="col-xs-9">
+					<input name='email' type='text' class='_crmio_inp form-control' placeholder='Email Address'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Phone No : </label>
+					<div class="col-xs-9">
+					<input name='phone' data-subtype='mobile' type='text' class='_crmio_inp form-control' placeholder='Mobile No.'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">LinkedIn : </label>
+					<div class="col-xs-9">
+					<input name='website' data-subtype='LINKEDIN' type='text' class='_crmio_inp form-control' value='{{linkedin}}' placeholder='Facebook page'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Address : </label>
+					<div class="col-xs-9">
+					<input name='addressStreet' type='text' class='_crmio_inp_custom address form-control' value='{{addressStreet}}' placeholder='Street'>
+					<input name='addressCity' type='text' class='_crmio_inp_custom address form-control' value='{{addressCity}}' placeholder='Address City' />
+								<input name='addressRegion' type='text' class='_crmio_inp_custom address form-control' placeholder='State'/>
+								<input name='addressZip' type='text' class='_crmio_inp_custom address form-control' placeholder='Zip' />
+								<select id="addressCountry" name='addressCountry' class='_crmio_inp_custom address form-control' style='width:150px;'>
+								{{{countrycode addressCountry}}}
+								</select>
+					</div>
+				</div>
+					<div style='text-align:center;'>
+						<input type='button' value='Save' class='_crmio_save_' onclick='onSaveCompany();'>
+						<input type='button' value='Cancel' class='_crmio_cancel_' onclick='onClose();'>
+					</div>
+				</form>
+		</script>
+
+			<script type="text/html" id="contact-form-template">
+				<h3 style='text-align:center;background-color:#986b94;color:white;margin-top:0px;padding:10px;'>Add Contact</h3>
+				<form class="form-horizontal" role="form" style="height:350;overflow-x:hidden;padding:10px;">
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Name : </label>
+					<div class="col-xs-9">
+					<input name='first_name' type='text' class='_crmio_inp form-control' placeholder='First Name' style="margin-botton:5px;">
+							<input name='last_name' type='text' class='_crmio_inp form-control' placeholder='Last Name'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Company : </label>
+					<div class="col-xs-9">
+					<input name='company' type='text' class='_crmio_inp form-control' placeholder='Company'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Job Description : </label>
+					<div class="col-xs-9">
+					<input name='title' type='text' class='_crmio_inp form-control' placeholder='Job Title'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Email : </label>
+					<div class="col-xs-9">
+					<input name='email' type='text' class='_crmio_inp form-control' placeholder='Email Address'>
+					</div>
+				</div>
+				<div class="form-group form-group-sm">
+					<label class="col-xs-3 control-label">Mobile : </label>
+					<div class="col-xs-9">
+					<input name='phone' data-subtype='mobile' type='text' class='_crmio_inp form-control' placeholder='Mobile No.'>
+					</div>
+				</div>
+					<div style='text-align:center;'>
+						<input type='button' value='Save' class='_crmio_save_' onclick='onSaveContact();'>
+						<input type='button' value='Cancel' class='_crmio_cancel_' onclick='onClose();'>
+					</div>
+				</form>
+		</script>
+		
+		</div>
+		
+	</body>
+</html>

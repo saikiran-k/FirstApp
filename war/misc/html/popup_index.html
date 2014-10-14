@@ -1,0 +1,400 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css" />
+		<link rel="stylesheet" href="../css/jquery-ui.min.css" type="text/css" />
+		<link rel="stylesheet" href="../css/bootstrapValidator.min.css" type="text/css" />
+		<link rel="stylesheet" href="../css/popup.css" type="text/css" />
+	</head>
+	<body>
+		
+		<div class="crmio-navbar">
+			<ul class="nav nav-tabs">
+			<li id="menu-notification"><a href="#"><span class="glyphicon glyphicon-bell"></span>Notifications</a></li>
+			<li id="menu-upcoming"><a href="#"><span class="glyphicon glyphicon-calendar"></span>Tasks</a></li>
+			<li id="menu-new" class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+				  <span class="glyphicon glyphicon-plus"></span>Add New <span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li id="menu-add-lead"><a href="#">Lead</a></li>
+					<li id="menu-add-task"><a href="#">Task</a></li>
+					<li id="menu-add-deal"><a href="#">Deal</a></li>
+				</ul>
+			</li>
+			<li id="menu-search"><a href="#"><span class="glyphicon glyphicon-search"></span>Search</a></li>
+		</ul>
+		</div>
+		
+		<div id="container">
+			<div id="notifications" class="hidden"></div>
+			<div id="upcoming" class="hidden notifications"></div>
+			<div id="new_contact" class="hidden">
+				<h3>Add Contact</h3>
+				<form id="contact_form" class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="firstName" class="col-xs-3 control-label">First Name</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control" id="firstName" name="first_name" placeholder="First Name">
+						</div>
+					</div>
+				   <div class="form-group">
+						<label for="lastName" class="col-xs-3 control-label">Last Name</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control" id="lastName" name="last_name" placeholder="Last Name">
+						</div>
+					</div>
+				  <div class="form-group">
+					<label for="inputEmail3" class="col-xs-3 control-label">Email</label>
+					<div class="col-xs-7">
+					  <input type="email" class="form-control" id="contactEmail" name="email" placeholder="Email">
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label for="phone" class="col-xs-3 control-label">Phone</label>
+					<div class="col-xs-7">
+					  <input type="text" class="form-control" id="contactPhone" name="phone" placeholder="Phone">
+					</div>
+				  </div>
+				  <div class="form-group">
+						<label for="jobTitle" class="col-xs-3 control-label">Job Title</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control" id="jobTitle" name="title" placeholder="Job Ttile">
+						</div>
+					</div>
+				   <div class="form-group">
+						<label for="company" class="col-xs-3 control-label">Company</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control" id="company" name="company" placeholder="Company">
+						</div>
+					</div>
+				  <div class="form-group">
+					<div class="col-sm-offset-2 col-xs-7">
+					  <button type="submit" id="save_contact" class="btn btn-primary">Save</button>
+					</div>
+				  </div>
+				</form>	
+			</div>
+			<div id="new_task" class="hidden">
+				<h3>Add Task</h3>
+				<form id="task_form" class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="task" class="col-xs-3 control-label">Task</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control" id="task" name="subject" placeholder="Task">
+						</div>
+					</div>
+				   <div class="form-group">
+						<label for="category" class="col-xs-3 control-label">Category</label>
+						<div class="col-xs-7">
+							<select class="form-control" id="category" name="type">
+								<option value="CALL">Call</option>
+								<option value="EMAIL">Email</option>
+								<option value="FOLLOW_UP">Follow Up</option>
+								<option value="MEETING">Meeting</option>
+								<option value="MILESTONE">Milestone</option>
+								<option value="SEND">Send</option>
+								<option value="TWEET">Tweet</option>
+								<option value="OTHER">Other</option>
+							</select>
+						</div>
+					</div>
+				  <div class="form-group">
+					<label for="priority_type" class="col-xs-3 control-label">Priority</label>
+					<div class="col-xs-7">
+						<select class="form-control" id="priority" name="priority_type">
+							<option value="HIGH">High</option>
+							<option value="NORMAL">Normal</option>
+							<option value="LOW">Low</option>
+						</select>
+					</div>
+				  </div>
+				  <div class="form-group">
+						<label for="owner_id" class="col-xs-3 control-label">Owner</label>
+						<div class="col-xs-7">
+							<select class="form-control" id="owner_id" name="owner_id">
+								
+							</select>
+						</div>
+					</div>
+				  <div class="form-group">
+						<label for="dueDate" class="col-xs-3 control-label">Due Date</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control date" id="dueDate" name="due" placeholder="mm/dd/yyyy">
+						</div>
+					</div>
+				  <div class="form-group">
+					<label for="relatedToEmail" class="col-xs-3 control-label">Related to</label>
+					<div class="col-xs-7">
+					  <input type="email" class="form-control" id="relatedToEmail" name="email" placeholder="Email of related contact">
+					</div>
+				  </div>
+				  <div class="form-group">
+					<div class="col-sm-offset-2 col-xs-7">
+					  <button type="submit" id="save_task" class="btn btn-primary">Save</button>
+					</div>
+				  </div>
+				</form>	
+			</div>
+			<div id="new_deal" class="hidden">
+				<h3>Add Deal</h3>
+				<form id="deal_form" class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="deal_name" class="col-xs-3 control-label">Name</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control" id="deal_name" name="name" placeholder="Name">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="expected_value" class="col-xs-3 control-label">Value</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control" id="expected_value" name="expected_value" placeholder="Value">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="probability" class="col-xs-3 control-label">Probability (%)</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control" id="probability" name="probability" placeholder="Probability(%)">
+						</div>
+					</div>
+				   <div class="form-group">
+						<label for="milestone" class="col-xs-3 control-label">Milestone</label>
+						<div class="col-xs-7">
+							<select class="form-control" id="milestone" name="milestone">
+								
+							</select>
+						</div>
+					</div>
+					 <div class="form-group">
+						<label for="owner_id" class="col-xs-3 control-label">Owner</label>
+						<div class="col-xs-7">
+							<select class="form-control" id="owner_id" name="owner_id">
+								
+							</select>
+						</div>
+					</div>
+				  <div class="form-group">
+						<label for="close_date" class="col-xs-3 control-label">Close Date</label>
+						<div class="col-xs-7">
+						  <input type="text" class="form-control date" id="close_date" name="close_date" placeholder="mm/dd/yyyy">
+						</div>
+					</div>
+				  <div class="form-group">
+					<label for="relatedToEmail" class="col-xs-3 control-label">Related to</label>
+					<div class="col-xs-7">
+					  <input type="email" class="form-control" id="relatedToEmail" name="email" placeholder="Email of related contact">
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label for="dealDescription" class="col-xs-3 control-label">Description</label>
+					<div class="col-xs-7">
+					  <textarea rows="2" class="form-control" id="dealDescription" name="description" placeholder="Description of the Deal"></textarea>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<div class="col-sm-offset-2 col-xs-7">
+					  <button type="submit" id="save_deal" class="btn btn-primary">Save</button>
+					</div>
+				  </div>
+				</form>	
+			</div>
+			<div id="crm_search" class="hidden agile-search"></div>
+			<div id="crm_others" class="hidden"></div>
+		</div>
+		<script type="text/javascript" src="../js/lib/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/lib/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../js/lib/jquery.validate.min.js"></script>
+		<script type="text/javascript" src="../js/lib/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="../js/lib/handlebars.min.js"></script>
+		<script type="text/javascript" src="../js/lib/pubnub.min.js"></script>
+		<script type="text/javascript" src="../js/lib/timeago.js"></script>
+		<script type="text/javascript" src="../js/lib/md5.js"></script>
+		<script type="text/javascript" src="../js/popup.js"></script>
+		<script type="text/javascript" src="../js/connector.js"></script>
+		<script type="text/javascript" src="../js/populate_template.js"></script>
+		
+		<div id="templates">
+			<script type="text/template" id="notification-template">
+				{{#each content}}
+					{{campaign_name}} - {{log_type}}<br/>
+				{{/each}}
+			</script>
+			
+			<script type="text/template" id="live-notification-template">
+			
+			{{#each agile_notifications}}
+				{{#ifCondition notification "==" "OPENED_EMAIL"}}
+				{{#if custom_value.time_opened}}
+				<div class="panel-group" id="accordion">
+				   <div class="panel panel-info">
+					  <div class="panel-heading">
+						   <p class="notification_header" data-toggle="collapse" data-parent="#accordion" data-target="#{{custom_value.time_opened}}">
+								<strong> Subject : </strong>{{custom_value.email_subject}}
+								Opened <time class="time-ago" datetime="{{epochToHumanDate "" custom_value.time_opened}}">{{epochToHumanDate "" custom_value.time_opened}}</time>
+						   </p>
+					  </div>
+					  <div id="{{custom_value.time_opened}}" class="panel-collapse collapse">
+						 <div class="panel-body">
+							{{#if first_name}}
+								{{first_name}}
+							{{/if}}
+							{{#if last_name}}
+								{{last_name}}
+							{{/if}}
+							"{{email}}" opened email  
+							<time class="time-ago" datetime="{{epochToHumanDate "" custom_value.time_opened}}">{{epochToHumanDate "" custom_value.time_opened}}</time>
+							{{#if custom_value.time_sent}}
+							which is sent on {{epochToTaskDate custom_value.time_sent}}
+							{{/if}}
+						 </div>
+					  </div>
+				   </div>
+				</div>
+				{{/if}}
+				{{/ifCondition}}
+				{{/each}}
+			</script>
+			
+			<script type="text/template" id="upcoming-tasks-template">
+				<ul class="striped-list" style="padding-left:0px;padding-right:20px;">
+				<!-- li class="list-group-item active">Tasks</li -->
+				{{#if content}}
+					{{#each content}}
+						 <li class="list-group-item" id="{{id}}" style="border:none;">
+							<input type="checkbox" class="complete_task" data-task="{{id}}">
+							{{{subject}}}
+							<span class="label label-default" style="position: absolute;left: 80%;margin: 5px;padding: 5px;">{{ucfirst type}}</span>
+							{{#if_equals priority_type "HIGH"}}
+							<span class="label label-danger">{{ucfirst priority_type}}</span>
+							{{/if_equals}}
+							{{#if_equals priority_type "NORMAL"}}
+							<!--span class="label">{{ucfirst priority_type}}</span-->
+							{{/if_equals}}
+							{{#if_equals priority_type "LOW"}}
+							<span class="label label-info">{{ucfirst priority_type}}</span>
+							{{/if_equals}}
+							</li>
+					{{/each}}
+				{{/if}}
+				</table>
+			</script>
+			<script type="text/template" id="search-template">
+			 <div class="col-lg-6">
+				<div class="input-group">
+				  <input type="search" class="form-control" id="inp_search_text" placeholder="Enter Search Keyword" >
+				  <span class="input-group-btn">
+					<button type="button" id="btn_search" data-loading-text="Searching..." class="btn btn-primary" >
+					  Search
+					</button>
+				  </span>
+				</div><!-- /input-group -->
+			  </div>
+				<div id="search-results"></div>
+			</script>
+			<script type="text/template" id="search-results-template">
+				{{#if content}}
+					<table class="table table-condensed table-hover">
+						<thead>
+							<th>Name & Email</th>
+							<th>Tags</th>
+						</thead>
+						{{#each content}}
+							<tr class="search-results" data-url="https://{{owner.domain}}.agilecrm.com/#contact/{{id}}">
+								<td>
+								<div class="row-fluid">
+									<div style="display:inline-block">
+										<img src="{{gravatarurl properties 50}}" class="img-circle" height="50" with="50" />
+									</div>
+									<div style="display:inline-block">
+										{{getPropertyValue properties "first_name"}} {{getPropertyValue properties "last_name"}}
+										<br/>
+										{{getPropertyValue properties "email"}}
+									</div>
+								</div>
+								</td>
+								<td>{{tags}}</td>
+							</tr>
+						{{/each}}
+					</table>
+				{{/if}}
+			</script>
+			<script type='text/template' id='linkedin-active-template'>
+				Fetch contact from currently active linkedin page<br/>
+				<input type='button' value='Fetch' id='linkedinFetch' data-tabId='{{tabId}}'>			
+			</script>
+			<script type='text/template' id='facebook-active-template'>
+				Fetch contact from currently active Facebook page<br/>
+				<input type='button' value='Fetch' id='facebookFetch' data-tabId='{{tabId}}'>			
+			</script>
+			
+			<script id="notify-html-template" type="text/html">
+				{{#if class}}
+					<div style="background-color: #f9f9f9"> 
+				{{else}}
+					<div> 
+				 {{/if}} 
+				<!-- Image urls hidden to show in desktop notifications. First span is for contact image and second span is for company.--> 
+				<span id={{gravatarurl properties 50}}>
+					<img src="{{gravatarurl properties 50}}" class="img-circle" width="50" height="50"/>
+				</span>
+				<span id="https://www.google.com/s2/favicons?domain={{getPropertyValue properties "url"}}"></span>
+					<span style="float:right;padding-right:5px;">
+						<time class="time-ago small" datetime="{{timeago notify_time}}"> {{timeago notify_time}} </time>
+					</span>
+				   {{#if entity_type}}
+					   <span><a href="#deals" id="notification-deal-id" style="color:black;font-weight:bold">{{name}}</a></span>
+				   {{else}}
+					   {{#if_contact_type "PERSON"}}
+						   <span style="vertical-align:text-top">
+							   <a href="https://{{domain}}.agilecrm.com/#contact/{{id}}" id="notification-contact-id" title=" {{getPropertyValue properties "first_name"}} {{ getPropertyValue properties "last_name"}}">{{getPropertyValue properties "first_name"}} {{getPropertyValue properties "last_name"}}</a>   
+						   </span>
+						{{/if_contact_type}}
+
+						{{#if_contact_type "COMPANY"}}
+						   <span style="vertical-align:text-top">
+							   <a href="#contact/{{id}}" id="notification-contact-id" style="color:black;font-weight:bold;">{{getPropertyValue properties "name"}}</a>
+						   </span>  
+						{{/if_contact_type}}
+				   {{/if}} 
+
+					<span class= "notification-type">{{#if_notification_type}} {{notification}} {{/if_notification_type}}</span>
+					{{#if_equals notification "OPENED_EMAIL"}}
+						<span class="small">
+							{{{sentTime custom_value}}}
+						</span>
+					{{/if_equals}}
+					
+					
+				</div>
+
+				</script>
+
+				<script id="call-notification-template" type="text/html">
+				<div class="notify">
+				<span id={{gravatarurl properties 50}}>
+					<img src="{{gravatarurl properties 50}}" class="img-circle" width="50" height="50"/>
+				</span>
+				<span style="vertical-align:text-top">
+					<a href="#contact/{{id}}" id = "calling-contact-id" style="color:black;font-weight:bold;" title=" {{getPropertyValue properties "first_name"}} {{ getPropertyValue properties "last_name"}}">{{getPropertyValue properties "first_name"}} {{getPropertyValue properties "last_name"}}</a>
+				</span>
+				<span style="margin-left:2px" id="call-notification-text">is calling</span>
+				<span><time class="time-ago" datetime="{{timeago notify_time}}"> {{timeago notify_time}} </time></span>
+				</div>
+				</script>
+
+				<script id="campaign-notify-template" type="text/html">
+				<div class="notify">
+				<span id={{gravatarurl properties 50}}>
+					<img src="{{gravatarurl properties 50}}" class="img-circle" width="50" height="50"/>
+				</span>
+				<span style="vertical-align:text-top">
+					<a href="#contact/{{id}}" id = "campaign-contact-id" style="color:black;font-weight:bold;" title=" {{getPropertyValue properties "first_name"}} {{ getPropertyValue properties "last_name"}}">{{getPropertyValue properties "first_name"}} {{getPropertyValue properties "last_name"}}</a>
+				</span>
+				</br>
+				<span style="margin-left:2px" id="campaign-notify-text">{{#stringToJSON this "custom_value"}}{{msg}}{{/stringToJSON}}</span>
+				<span><time class="time-ago" datetime="{{timeago notify_time}}"> {{timeago notify_time}} </time></span>
+				</div>
+				</script>
+				
+		</div>
+	</body>
+</html>

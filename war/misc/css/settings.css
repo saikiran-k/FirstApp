@@ -1,0 +1,31 @@
+body{
+	margin:0px;
+}
+div#crm-selection{
+	background-color:green;
+}
+
+div#crm-selection>div{
+	display:inline-block;
+	padding:15px 10px;
+	background-color:green;
+	color:black;
+}
+
+div#crm-selection>div:hover{
+	color:white;
+}
+
+div#crm-selection>div.active{
+	background-color:darkgreen;
+	color:white;
+}
+
+div#crm-user-settings label{
+	width:150px;
+	display:inline-block;
+}
+
+.hidden {
+	display:none;
+}

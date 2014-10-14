@@ -1,0 +1,14 @@
+Data Storage - 
+
+USER_SETTINGS -> will store user settings
+	- domain
+	- apikey
+	- email to bind
+	- type -> Agile, or any other
+	
+URL endpoints to be saved in the extension itself.
+
+
+Agile Connector :
+https://domain.agilecrm.com/dev/api/<whatever>
+header : Authorization -> "xx base64(user.email:user.apikey)"

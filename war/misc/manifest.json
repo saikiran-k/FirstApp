@@ -1,0 +1,65 @@
+{
+  "manifest_version": 2,
+
+  "name": "Agile CRM",
+  "description": "Sales & Marketing CRM for Small Businesses",
+  "version": "1.0.1",
+  "icons": { "16": "images/cloud16x16.png",
+           "48": "images/cloud48x48.png",
+          "128": "images/cloud128x128.png" },
+  
+  "options_page":"html/settings.html",
+
+  "permissions": [
+    "cookies",
+	"webRequest",
+	"webRequestBlocking",
+    "https://*/","http://*/",
+	"storage",
+	"notifications",
+	"tabs",
+	"contextMenus"
+  ],
+  "browser_action": {
+	"default_icon": "images/cloud16x16.png",
+    "default_popup": "html/popup_index.html"
+  },
+
+  "background":{
+		"page": "html/background.html"
+  }, 		
+  
+  "content_scripts": [
+	{
+		"matches": ["https://mail.google.com/*"],
+		"js": ["js/lib/jquery.min.js", "js/lib/md5.js","js/lib/pubnub.min.js","js/connector.js","js/content_gmail_binder.js","js/util.js"]
+	},
+	{
+		"matches": ["https://mail.google.com/*"],
+		"js": ["js/lib/md5.js","js/util.js","js/xhr_override.js"],
+		"run_at":"document_start",
+		"all_frames":true
+	},
+	{
+		"matches":["http://*/*","https://*/*"],
+		"js":["js/lib/jquery.min.js", "js/lib/md5.js","js/content_generic.js","js/util.js","js/connector.js"]
+	},
+	{
+		"matches":["https://www.facebook.com/*"],
+		"js":["js/content_country_code.js","js/content_fb_scrapper.js"]
+	},
+	{
+		"matches":["https://*.linkedin.com/*","http://*.linkedin.com/*"],
+		"js":["js/content_country_code.js","js/content_lnk_scrapper.js"]
+	}
+  ],
+	
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://push.agilecrm.com; object-src 'self'",
+  
+  "web_accessible_resources": [
+    "images/track_test.png",
+    "js/xhr_override.js",
+    "css/font-awesome.min.css",
+    "fonts/fontawesome-webfont.woff"
+  ]
+}

@@ -1,0 +1,566 @@
+var USER_SETTINGS={};
+var crm={};
+
+function fetchActiveContact(onFail){
+	chrome.tabs.query({active:true,highlighted:true}, function(tb){
+		console.log(tb.length+ ' -> '+tb[0].url);
+		
+		if(tb[0].url.indexOf('www.linkedin.com')!=-1){
+			$("div.crmio-navbar li").removeClass('active');
+			$("li#menu-new").addClass('active');
+			$("div#crm_others ").html(getHTML("linkedin-active",{tabId:tb[0].id}));
+			$("div#container>div").addClass('hidden');
+			$("div#crm_others ").removeClass('hidden');
+		}
+		else if(tb[0].url.indexOf('www.facebook.com')!=-1){
+			$("div.crmio-navbar li").removeClass('active');
+			$("li#menu-new").addClass('active');
+			$("div#crm_others").html(getHTML("facebook-active",{tabId:tb[0].id}));
+			$("div#container>div").addClass('hidden');
+			$("div#crm_others ").removeClass('hidden');
+		}
+		else{
+			onFail();
+			return;
+		} 
+		
+		/* When showing UI here
+		chrome.tabs.sendMessage(tb[0].id,'crmio_get_contact_details',function(resp){
+			console.log(resp);
+		});
+		*/
+	});
+}
+
+function loadSettings(onLoad)
+{
+	chrome.storage.local.get(function(item){
+		if(item.USER_SETTINGS)
+			USER_SETTINGS=item.USER_SETTINGS;
+		else USER_SETTINGS={};
+		
+		if(onLoad)onLoad();
+	});
+}
+
+function loadNotifications()
+{
+	$("div.crmio-navbar li").removeClass('active');
+	$("li#menu-notification").addClass('active');
+	$("div#container>div").addClass('hidden');
+	$("div#notifications").removeClass('hidden');
+	if(!crm.init_status)
+	{
+		console.log("Connector failed");
+		return;
+	}
+	
+	$("div#notifications").html("<div style='text-align:center; margin-top:5px;'><img src='../images/ajax-loader-cursor.gif'></div>");
+	
+	
+	chrome.storage.local.get('agile_notifications',function(data){ 
+		console.log("Notifications",data);
+		var html = '';
+		if(data.agile_notifications)
+		{
+			
+			$.each(data.agile_notifications, function(index, message)
+			{
+				if(index%2!=0)
+					message.class = 'active';
+				console.log('message',message);
+				if(message.notification == 'CAMPAIGN_NOTIFY')
+					html += getHTML('campaign-notify', message);
+				else if(message.notification == 'CALL')
+					html += getHTML('call-notification', message);
+				else
+					html += getHTML('notify-html', message);
+	
+			});
+		} else {
+			html = '<div id="message" class="alert alert-info">No Notifications.</div>';
+		}
+		//console.log(html);
+		$("div#notifications").html(html);
+		$(".time-ago").timeago();
+	});
+}
+
+function loadUpcomingTasks()
+{
+	$("div.crmio-navbar li").removeClass('active');
+	$("li#menu-upcoming").addClass('active');
+	$("div#container>div").addClass('hidden');
+	$("div#upcoming").removeClass('hidden');
+	if(!crm.init_status)
+	{
+		console.log("Connector failed");
+		return;
+	}
+	
+	$("div#upcoming").html("<div style='text-align:center; margin-top:5px;'><img src='../images/ajax-loader-cursor.gif'></div>");
+	
+	crm.upcomingTasks(function(data){ 
+		$("div#upcoming").html(getHTML("upcoming-tasks",data));
+		$.each(data, function(index, task)
+		{
+			$("div#upcoming").find('li#'+task.id).data(task);
+		});
+	});	
+}
+
+function loadSearch()
+{
+	$("div.crmio-navbar li").removeClass('active');
+	$("li#menu-search").addClass('active');
+	$("div#container>div").addClass('hidden');
+	$("div#crm_search").removeClass('hidden');
+	$("div#crm_search").html(getHTML("search"));
+		$("#btn_search").on("click",function(evt){
+		loadSearchResults();
+	});
+}
+
+function loadSearchResults()
+{
+	if(!crm.init_status)
+	{
+		console.log("Connector failed");
+		return;
+	}
+	$("#btn_search").button('loading');
+	$("div#container #search-results").html("<div style='text-align:center; margin-top:5px;'><img src='../images/ajax-loader-cursor.gif'></div>");
+	
+	crm.search($("input#inp_search_text").val(),function(contacts){
+		
+		console.log(contacts);
+		var html = '<div id="message" class="alert alert-info">No Contacts found matching the keyword.</div>';
+		if(contacts.length > 0)
+			html = getHTML("search-results",contacts);
+		
+		$("div#container #search-results").html(html);
+		$("#btn_search").button('reset');
+		$('.search-results').on('click', function(){
+			window.open($(this).attr('data-url'));
+		});
+	});
+	
+}
+
+function saveDeal()
+{
+	var deal = {};
+	$("#deal_form").find(".form-control").each(function()
+	{	
+		var value = $(this).val();
+		var label = $(this).attr('name');
+		if(label=='close_date')
+		{
+			var date = new Date(value);
+			value = date.getTime() / 1000;
+		}
+		// Ignore the Email in JSON as it is to be sent in the URL but not in the JSON.
+		// This is the email of the contact to which this deal is related to.
+		if(label!='email')
+			deal[label] = value;
+	});
+	console.log(deal);
+	var email = $("#deal_form input[name='email']").val();
+	
+	if(email.length == 0)
+	{
+		
+		crm.createDeal(deal, 
+		function(resp)
+		{	
+			$('#save_deal').attr('disabled','disabled');
+			console.log(resp);
+			$("#deal_form").append('<div id="message" class="alert alert-info">Deal is added in AgileCRM.</div>');
+		},
+		function(err)
+		{
+			console.log(err);
+			$("#deal_form").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
+		});
+	} else {
+		console.log(email);
+
+		crm.addDeal(email, deal, 
+		function(resp)
+		{	
+			$('#save_deal').attr('disabled','disabled');
+			console.log(resp);
+			$("#deal_form").append('<div id="message" class="alert alert-info">Deal is added in AgileCRM.</div>');
+		},
+		function(err)
+		{
+			console.log(err);
+			$("#deal_form").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
+		});
+	}
+		email = null;
+		
+	
+}
+
+/**
+ * Generate the JSON by the values in the form and create a Task in Agile CRM.
+**/
+function saveTask()
+{
+	var task = {};
+	$("#task_form").find(".form-control").each(function()
+	{	
+		var value = $(this).val();
+		var label = $(this).attr('name');
+		if(label=='due')
+		{
+			var date = new Date(value);
+			value = date.getTime() / 1000;
+		}
+		// Ignore the Email in JSON as it is to be sent in the URL but not in the JSON.
+		// This is the email of the contact to which this task is related to.
+		if(label!='email')
+			task[label] = value;
+	});
+	console.log(task);
+	var email = $("#task_form input[name='email']").val();
+	if(email.length == 0)
+	{
+		crm.createTask(task, 
+		function(resp)
+		{
+			$('#save_task').attr('disabled','disabled');
+			console.log(resp);
+			$("#task_form").append('<div id="message" class="alert alert-info">Task is added in AgileCRM.</div>');
+		},
+		function(err)
+		{
+			console.log(err);
+			$("#task_form").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
+		});
+	} else {
+		console.log(email);
+	crm.addTask(email, task, 
+		function(resp)
+		{
+			$('#save_task').attr('disabled','disabled');
+			console.log(resp);
+			$("#task_form").append('<div id="message" class="alert alert-info">Task is added in AgileCRM.</div>');
+		},
+		function(err)
+		{
+			console.log(err);
+			$("#task_form").append('<div id="message" class="alert alert-danger">'+err.responseText+'</div>');
+		});
+	}
+
+}
+
+/**
+ * Generate the JSON by the values in the form and create a Task in Agile CRM.
+**/
+function completeTask(task)
+{
+	var rel_contacts = [];
+	$.each(task.contacts, function(index, contact)
+	{
+		if(contact.id)
+			rel_contacts.push(contact.id);
+		else
+			rel_contacts.push(contact);
+		console.log(contact.id);
+	});
+	task.contacts = rel_contacts;
+	task.owner_id = task.taskOwner.id;
+	console.log("Completed Task",task);
+	crm.updateTask(task, 
+		function(resp)
+		{
+			console.log(resp);
+			$("#"+task.id).css('text-decoration: line-through;');
+			$("#"+task.id).data(resp)
+		},
+		function(err)
+		{
+			console.log(err);
+			//$("#task_form").append('<p class="bg-danger">'+err.responseText+'</p>');
+		});
+}
+
+/**
+ * Generate the JSON by the values in the form and create a Contact in Agile CRM.
+**/
+function saveContact()
+{
+	var contact = {};
+	var properties = [];
+	$("#contact_form").find(".form-control").each(function()
+	{	
+		var value = $(this).val();
+		var label = $(this).attr('name');
+		var property = {};
+		if(value)
+		{
+			console.log(label +' : '+ value);
+			property.value= value;
+			property.name=label;
+			property.type="SYSTEM";
+			properties.push(property);
+		}
+	});
+	contact.properties = properties;
+	console.log(contact);
+	crm.addContact(contact, function(resp)
+		{	
+			$('#save_contact').attr('disabled','disabled');
+			console.log(resp);
+			$("#contact_form").append('<p class="bg-success">Contact added to AgileCRM.</p>');
+		}, 
+		function(err)
+		{
+			console.log(err);
+			$("#contact_form").append('<p class="bg-danger">'+err.responseText+'</p>');
+		});
+}
+
+function validateDealForm()
+{
+	$('#deal_form').validate({
+		submitHandler: function(form){
+			saveDeal();
+		},
+        rules: {
+            name:"required",
+			expected_value: "required",
+			close_date: "required",
+			probability: "required",
+			milestone: "required",
+            email: {
+				email: true
+            }
+        },
+		messages: {
+			name: "Please enter a name for the Deal.",
+			probability: "Please enter a probability for the Deal.",
+			expected_value: "Please enter a value for the Deal.",
+			milestone: "Please select the milestone of the Deal.",
+			close_date: "Please select a Close date for the Deal.",
+			email: "Please enter a valid Email Address."
+		}
+		
+    });
+}
+
+function validateTaskForm()
+{
+	$('#task_form').validate({
+		submitHandler: function(form){
+			saveTask();
+		},
+        rules: {
+            subject:"required",
+			type: "required",
+			due: "required",
+            email: {
+				email: true
+            }
+        },
+		messages: {
+			subject: "Please enter Task.",
+			type: "Please select the Type of the Task.",
+			due: "Please select a due date.",
+			email: "Please enter a valid Email Address."
+		}
+		
+    });
+}
+
+function validateContactForm()
+{
+	$('#contact_form').validate({
+		submitHandler: function(form){
+			saveContact();
+		},
+        rules: {
+            first_name:"required",
+			last_name: "required",
+            email: {
+                required: true,
+				email: true
+            }
+        },
+		messages: {
+			first_name: "Please enter your First Name.",
+			last_name: "Please Enter your Last Name.",
+			email: "Please enter a valid Email Address."
+		}
+		
+    });
+}
+
+function showDealForm()
+{
+	$("div.crmio-navbar li").removeClass('active');
+	$("li#menu-new").addClass('active');
+	$("#menu-add-deal").addClass('active');
+	$("div#container>div").addClass('hidden');
+
+	// Get the owners list from the server.
+	crm.loadSimpleUrl(crm.base_url+'users',function(response){
+		console.log(response);
+        var html = '';
+        // Construct the option for the Milestones Select list dynamicly.
+        $.each(response,function(index,user)
+        {
+             html += '<option value="'+user.id+'">'+ user.name+'</option>';
+        });
+       $("#deal_form #owner_id").html(html);
+	});
+	
+	// Get the milestone from the server.
+	crm.loadSimpleUrl(crm.js_url+'contact/get-milestones?id='+USER_SETTINGS.apikey,function(response){
+		console.log(response);
+		var milestones = response.milestones.split(',');
+        var html = '';
+        // Construct the option for the Milestones Select list dynamicly.
+        for(var i=0; i < milestones.length; i++)
+        {
+             html += '<option value="'+milestones[i]+'">'+ milestones[i]+'</option>';
+        }
+       $("#deal_form #milestone").html(html);
+		$("div#new_deal").removeClass('hidden');
+	});
+	$('.date').datepicker({minDate:0});
+	validateDealForm();
+}
+
+function showTaskForm()
+{
+	$("div.crmio-navbar li").removeClass('active');
+	$("li#menu-new").addClass('active');
+	$("#menu-add-task").addClass('active');
+	$("div#container>div").addClass('hidden');
+	// Get the owners list from the server.
+	crm.loadSimpleUrl(crm.base_url+'users',function(response){
+		console.log(response);
+        var html = '';
+        // Construct the option for the Milestones Select list dynamicly.
+        $.each(response,function(index,user)
+        {
+             html += '<option value="'+user.id+'">'+ user.name+'</option>';
+        });
+       $("#task_form #owner_id").html(html);
+	   
+	   $("div#new_task").removeClass('hidden');
+	});
+	
+	$('#dueDate').datepicker({minDate:0});
+	validateTaskForm();
+}
+
+function showContactForm()
+{
+	$("div.crmio-navbar li").removeClass('active');
+	$("li#menu-new").addClass('active');
+	$("#menu-add-lead").addClass('active');
+	$("div#container>div").addClass('hidden');
+	$("div#new_contact").removeClass('hidden');
+	$('#save_contact').removeAttr('disabled');
+	validateContactForm();
+}
+
+$(function(){
+
+	loadSettings(function(){
+		if(!USER_SETTINGS.email)
+		{
+			chrome.tabs.create({url: "html/settings.html"});
+			window.close();
+			return;
+		}
+		
+		crm=new CRMConnector();
+		
+		if(!USER_SETTINGS.crm)
+		{
+			//$("div.crmio-navbar").hide();
+			//$("div.crmio-navbar-simple").show();
+			loadNotifications();
+		}
+		else{
+			fetchActiveContact(loadNotifications);
+		}
+
+	});
+	
+	$("#btn_settings").on("click",function(){
+		chrome.tabs.create({url: "html/settings.html"});
+		window.close();
+		return;
+	});
+	
+	$("#menu-notification").on("click",loadNotifications);
+	$("#menu-upcoming").on("click",loadUpcomingTasks);
+	$("#menu-search").on("click",loadSearch);
+	$("#menu-add-lead").on("click",showContactForm);
+	$("#menu-add-task").on("click", showTaskForm);
+	$("#menu-add-deal").on("click", showDealForm);
+	$("div#container").on("keypress","input#inp_search_text",function(evt){
+		if(evt.keyCode==13){
+			loadSearchResults();
+		}
+	});
+	
+	//$("#contact_form #save_contact").on("click", saveContact);
+	//$("#task_form #save_task").on("click", saveTask);
+	$("div#container").on("click","input.btn_cursor_more",function(evt){
+		evt.stopPropagation();
+		var btn=$(this).closest("input.btn_cursor_more");
+		
+		if(!btn)return;
+		
+		var url=btn.attr('data-next-url');
+		var tpl=btn.attr('data-template');
+		
+		if(!url)return;
+		
+		crm.loadSimpleUrl(url,function(data){
+			
+			if(data.length && data[data.length-1].stats_cursor)
+			{
+				data[data.length-1].next_url=url.replace(/cursor=[^&]*/,'cursor='+data[data.length-1].stats_cursor);
+			}
+			
+			btn.before(getHTML(tpl,data));
+			btn.remove();
+		});
+	});
+	
+	$("div#container").on("click","input#linkedinFetch,input#facebookFetch",function(evt){
+		chrome.tabs.sendMessage(parseInt(this.dataset['tabid']),'crmio_get_contact_details', function(contact){
+			console.log(contact);
+		});
+		window.close();
+		
+	});
+	$('#upcoming').delegate('.complete_task','click',function()
+	//$(".complete_task").live('click', function(evt)
+	{
+		var task = $(this).parent().data();
+		console.log($(this).prop('checked'));
+		if($(this).prop('checked'))
+		{
+			task.is_complete = true;
+			$("#"+task.id).css('text-decoration','line-through');
+		}
+		else
+		{
+			task.is_complete = false;
+			$("#"+task.id).css('text-decoration','none');
+		}
+		//task.progress = "100";
+		completeTask(task);
+	});
+	
+});
